@@ -1,6 +1,10 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
+from collections.abc import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
+
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -8,19 +12,16 @@ settings = get_settings()
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=True,
-    future=True
 )
 
 AsyncSessionLocal = sessionmaker(
     engine,
     class_=AsyncSession,
-    expire_on_commit=False
+    expire_on_commit=False,
 )
 
-Base = declarative_base()
 
-async def get_db() -> AsyncSession:
-    """Dependency for database session."""
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -30,3 +31,10 @@ async def get_db() -> AsyncSession:
             raise
         finally:
             await session.close()
+
+
+async def init_db() -> None:
+    import app.models  # noqa: F401 — register metadata
+
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)

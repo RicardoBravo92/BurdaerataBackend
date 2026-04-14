@@ -1,15 +1,20 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
+
 
 class Settings(BaseSettings):
     """Application settings."""
-    DATABASE_URL: str
-    SECRET_KEY: str
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    DATABASE_URL: str = "sqlite+aiosqlite:///./burdaerata.sqlite3"
+    SECRET_KEY: str = "dev-secret-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     API_V1_STR: str = "/api/v1"
 
-    class Config:
-        env_file = ".env"
+    CLERK_SECRET_KEY: str = ""
+    AUTHORIZED_PARTIES: str = ""
+
 
 @lru_cache()
 def get_settings() -> Settings:
