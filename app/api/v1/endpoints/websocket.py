@@ -19,12 +19,10 @@ async def websocket_endpoint(
         return
 
     await ws_manager.connect(websocket, game_id, user_id)
-    await ws_manager.send_to_game(game_id, "player_joined", {"user_id": user_id})
-
+ 
     try:
         while True:
             data = await websocket.receive_json()
             await websocket.send_json({"event": "ack", "data": data})
     except WebSocketDisconnect:
         ws_manager.disconnect(game_id, user_id)
-        await ws_manager.send_to_game(game_id, "player_left", {"user_id": user_id})

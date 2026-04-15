@@ -274,6 +274,10 @@ class GameService:
             raise ValueError("Round not found")
         if rnd.judge_user_id == user_id:
             raise ValueError("Judge cannot submit answers")
+        
+        existing = await game_repository.get_answer_by_user(db, round_id, user_id)
+        if existing:
+            raise ValueError("You have already submitted an answer for this round")
 
         clean = [c for c in cards_used if c]
         ans = RoundAnswer(

@@ -93,6 +93,17 @@ class GameRepository:
     async def get_answer(self, db: AsyncSession, answer_id: str) -> Optional[RoundAnswer]:
         return await db.get(RoundAnswer, answer_id)
 
+    async def get_answer_by_user(
+        self, db: AsyncSession, round_id: str, user_id: str
+    ) -> Optional[RoundAnswer]:
+        result = await db.execute(
+            select(RoundAnswer).where(
+                RoundAnswer.round_id == round_id,
+                RoundAnswer.user_id == user_id,
+            )
+        )
+        return result.scalar_one_or_none()
+
     async def get_player_cards_row(
         self, db: AsyncSession, game_id: str, user_id: str
     ) -> Optional[PlayerCard]:
