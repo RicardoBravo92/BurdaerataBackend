@@ -212,8 +212,9 @@ class GameService:
         game.status = "playing"
         db.add(game)
         await db.flush()
-
+        
         await self._deal_cards(db, game_id, players)
+        await db.commit()
         
         judge_prof = await db.get(User, rnd.judge_user_id)
         round_data = _round_to_dict(rnd, judge_prof)
@@ -260,6 +261,7 @@ class GameService:
             winning_answer_id=None,
         )
         await game_repository.add(db, nxt)
+        await db.commit()
         
         judge_prof = await db.get(User, nxt.judge_user_id)
         round_data = _round_to_dict(nxt, judge_prof)
@@ -315,6 +317,7 @@ class GameService:
             db.add(row)
             await db.flush()
 
+        await db.commit()
         prof = await db.get(User, user_id)
         answer_data = _answer_to_dict(ans, prof)
         await ws_manager.send_to_game(rnd.game_id, "answer_submitted", answer_data)
@@ -361,6 +364,8 @@ class GameService:
         gplayer.score = (gplayer.score or 0) + 1
         db.add(gplayer)
         await db.flush()
+        
+        await db.commit()
 
         game = await game_repository.get_game_by_id(db, rnd.game_id)
         if (
