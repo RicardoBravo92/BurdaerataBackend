@@ -215,8 +215,6 @@ class GameService:
 
         await self._deal_cards(db, game_id, players)
         
-        await db.commit() # Ensure data is committed before notifying clients
-        
         judge_prof = await db.get(User, rnd.judge_user_id)
         round_data = _round_to_dict(rnd, judge_prof)
         await ws_manager.send_to_game(game_id, "game_started", {"round": round_data})
@@ -262,8 +260,6 @@ class GameService:
             winning_answer_id=None,
         )
         await game_repository.add(db, nxt)
-        
-        await db.commit() # Commit new round before notifying
         
         judge_prof = await db.get(User, nxt.judge_user_id)
         round_data = _round_to_dict(nxt, judge_prof)
