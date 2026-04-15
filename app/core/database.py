@@ -18,6 +18,10 @@ elif database_url.startswith("postgresql://"):
 engine = create_async_engine(
     database_url,
     echo=True,
+    pool_pre_ping=True,      # test connections before use (handles Neon idle drops)
+    pool_recycle=300,        # recycle connections every 5 minutes
+    pool_size=5,
+    max_overflow=10,
 )
 
 AsyncSessionLocal = sessionmaker(
