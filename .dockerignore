@@ -8,7 +8,6 @@ Dockerfile
 docker-compose.yml
 Makefile
 render.yaml
-alembic.ini
 burdaerata.sqlite3
 *.sqlite3
 *.log

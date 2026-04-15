@@ -7,9 +7,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    DATABASE_URL: str = "sqlite+aiosqlite:///./burdaerata.sqlite3"
-    SECRET_KEY: str = "dev-secret-change-in-production"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    DATABASE_URL: str = ""
     API_V1_STR: str = "/api/v1"
 
     CLERK_SECRET_KEY: str = ""
