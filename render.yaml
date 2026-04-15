@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: burdaerata-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: uv sync --frozen && uv run alembic upgrade head
+    startCommand: uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: burdaerata-db
+          property: connectionString
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: AUTHORIZED_PARTIES
+        value: "https://burdaerata.vercel.app"
+      - key: PYTHON_VERSION
+        value: "3.12"
+
+databases:
+  - name: burdaerata-db
+    plan: free
+    databaseName: burdaerata
+    ipAllowList: []

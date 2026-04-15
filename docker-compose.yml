@@ -4,16 +4,16 @@ services:
     container_name: burdaerata_backend
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:password@db:5432/burdaerata
-      - REDIS_URL=redis://redis:6379/0
+      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+      - AUTHORIZED_PARTIES=${AUTHORIZED_PARTIES}
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
     restart: always
-    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
   db:
     image: postgres:15-alpine
     container_name: burdaerata_db
@@ -25,16 +25,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
-    env_file:
-      - .env
-
-  redis:
-    image: redis:7-alpine
-    container_name: burdaerata_redis
-    ports:
-      - "6379:6379"
-    restart: always
+    health_check:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

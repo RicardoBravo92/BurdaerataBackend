@@ -1,0 +1,2126 @@
+{
+    "questions": [
+        {
+            "id": "q1",
+            "text": "Mis peos huelen a podrido porque comí _____",
+            "blank_count": 1
+        },
+        {
+            "id": "q2",
+            "text": "Lo último que me mandaron por el grupo de WhatsApp: _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q3",
+            "text": "Esta semana comienzo una dieta a punta de casabe y _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q4",
+            "text": "Para subir el cerro hace falta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q5",
+            "text": "Cuando me peque el Kino voy comprar _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q6",
+            "text": "Vacilen este truco. Voy a sacar _____ de (mi) _____.",
+            "blank_count": 2
+        },
+        {
+            "id": "q7",
+            "text": "Me cago de la risa cuando veo _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q8",
+            "text": " _____.¡Uy! Asi no me decías anoche...",
+            "blank_count": 1
+        },
+        {
+            "id": "q9",
+            "text": "Marico, el campeonato mundial de _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q10",
+            "text": "Hoy por televisión la historia de _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q11",
+            "text": " _____: Voy con todo.",
+            "blank_count": 1
+        },
+        {
+            "id": "q12",
+            "text": "¿A qué coño huele?",
+            "blank_count": 1
+        },
+        {
+            "id": "q13",
+            "text": "¿Cómo se relagan los maricos?",
+            "blank_count": 1
+        },
+        {
+            "id": "q14",
+            "text": "Te quiero mostrar _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q15",
+            "text": "Ojalá que en la rumba haya _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q16",
+            "text": "¡_____! Es burda de ácido",
+            "blank_count": 1
+        },
+        {
+            "id": "q17",
+            "text": "En mérida celebran la feria de _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q18",
+            "text": "Lo último que quiero ver cuando llego a la casa es _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q19",
+            "text": "Ay ¡que bello! _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q20",
+            "text": "Si tuviera más billete, me compraría _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q21",
+            "text": "¡Ay papá!, te está buscando _____",
+            "blank_count": 1
+        },
+        {
+            "id": "q22",
+            "text": "Venezuela es el unico país donde se puede _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q23",
+            "text": "El dueño de esta casa raya todas las noches pensando en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q24",
+            "text": "Estas más ladillado que _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q25",
+            "text": "¡Que niche! _____ con _____.",
+            "blank_count": 2
+        },
+        {
+            "id": "q26",
+            "text": "En Chichiriviche hay _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q27",
+            "text": "Siempre corono en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q28",
+            "text": "Me pongo quesudo(a) cuando oigo a _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q29",
+            "text": "Tengo ganas de ser _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q30",
+            "text": "No entiendo por qué no te gusta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q31",
+            "text": "Cada vez que estoy tirando, me gusta pensar en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q32",
+            "text": "¿Qué acabó con mi última relación?",
+            "blank_count": 1
+        },
+        {
+            "id": "q33",
+            "text": "Pana, estoy cagao. No sé si puedo _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q34",
+            "text": "¿Estás seguro de que quieres _____?",
+            "blank_count": 1
+        },
+        {
+            "id": "q35",
+            "text": "Amo _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q36",
+            "text": "A este grupete le gusta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q37",
+            "text": "El otro día se te paró el guevo porque viste _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q38",
+            "text": "La próxima persona con quien voy a tirar es _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q39",
+            "text": "¿Cuál es el placer oculto del juez de esta ronda?",
+            "blank_count": 1
+        },
+        {
+            "id": "q40",
+            "text": "Al más sometido de este grupo no lo dejan _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q41",
+            "text": "¡Si! Yo maté a _____ con _____.",
+            "blank_count": 2
+        },
+        {
+            "id": "q42",
+            "text": "A los maracuchos les gusta rumbear con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q43",
+            "text": "Er shiudadano va etenio por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q44",
+            "text": "En el Museo de los Niños hay una exhibición de _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q45",
+            "text": "Revegeishon, a ella como que le gusta _____ en la cama.",
+            "blank_count": 1
+        },
+        {
+            "id": "q46",
+            "text": "_____ + _____ = _____",
+            "blank_count": 3
+        },
+        {
+            "id": "q47",
+            "text": "¡Pinga e mono! Ni de vaina salgo con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q48",
+            "text": "Se esguañingó por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q49",
+            "text": "Que dolor me da pensar en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q50",
+            "text": "Mi fantasía sexual es _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q51",
+            "text": "¿Qué garantiza un polvo?",
+            "blank_count": 1
+        },
+        {
+            "id": "q52",
+            "text": "Me botaron de la universidad por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q53",
+            "text": "¡Naguará, _____!",
+            "blank_count": 1
+        },
+        {
+            "id": "q54",
+            "text": "Esta mañana caqué pensando en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q55",
+            "text": "¿Que me traje del viaje a Mérida?",
+            "blank_count": 1
+        },
+        {
+            "id": "q56",
+            "text": "_____. !Uno solo no es suficiente!",
+            "blank_count": 1
+        },
+        {
+            "id": "q57",
+            "text": "¿Qué me encontré en el piso del hotel Aladdin?",
+            "blank_count": 1
+        },
+        {
+            "id": "q58",
+            "text": "El otro día me comí _____ en la calle.",
+            "blank_count": 1
+        },
+        {
+            "id": "q59",
+            "text": "_____. Te lo puse manguangua, para que no te sigas quejando.",
+            "blank_count": 1
+        },
+        {
+            "id": "q60",
+            "text": "¿Chamo, a qué huele?",
+            "blank_count": 1
+        },
+        {
+            "id": "q61",
+            "text": "Me mandaron una cadena de WhatsApp que salía _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q62",
+            "text": "Tengo peos con todo el mundo, menos con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q63",
+            "text": "Te va a gustar _____ cuando seas grande.",
+            "blank_count": 1
+        },
+        {
+            "id": "q64",
+            "text": "Lo soborne con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q65",
+            "text": "Que ladilla... Ahí viene _____ a jodernos otra vez.",
+            "blank_count": 1
+        },
+        {
+            "id": "q66",
+            "text": "Que nota ver _____ en mi casa.",
+            "blank_count": 1
+        },
+        {
+            "id": "q67",
+            "text": "A la más tetona de este grupo le gusta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q68",
+            "text": "Mi primer noviazgo terminó por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q69",
+            "text": "Esta es la manera que excito a mi pareja para tirar:_____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q70",
+            "text": "Cuando acabo, siento así como _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q71",
+            "text": "Venezuela es líder en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q72",
+            "text": "¡Que molleja contigo! No dejas de hablar de _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q73",
+            "text": "¡Si Luis! Sigue creyendo que _____ viene esta noche.",
+            "blank_count": 1
+        },
+        {
+            "id": "q74",
+            "text": "_____ el próximo guiso que tengo cuadrado.",
+            "blank_count": 1
+        },
+        {
+            "id": "q75",
+            "text": "¡Ñioooo! El otro día me llegó un voice donde me decías _____",
+            "blank_count": 1
+        },
+        {
+            "id": "q76",
+            "text": "_____. ¡Chócala!",
+            "blank_count": 1
+        },
+        {
+            "id": "q77",
+            "text": "_____ es lo que alegraría a todos en este instante.",
+            "blank_count": 1
+        },
+        {
+            "id": "q78",
+            "text": "Me da culillo dormir en las noches, porque pienso que me va a salir _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q79",
+            "text": "Me clavaron en el examen por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q80",
+            "text": "¿_____? Eso ya está rayao.",
+            "blank_count": 1
+        },
+        {
+            "id": "q81",
+            "text": "De ahora en adelante necesitas _____ para que te paren.",
+            "blank_count": 1
+        },
+        {
+            "id": "q82",
+            "text": "_____. Sabe divino",
+            "blank_count": 1
+        },
+        {
+            "id": "q83",
+            "text": "A esa jeva no se la coje nadie por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q84",
+            "text": "Mañana vamos todos a _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q85",
+            "text": "¡_____! Eres un guevo pelao.",
+            "blank_count": 1
+        },
+        {
+            "id": "q86",
+            "text": "¡_____! Zape gato.",
+            "blank_count": 1
+        },
+        {
+            "id": "q87",
+            "text": "_____. Chamo, eso está bien peluo...",
+            "blank_count": 1
+        },
+        {
+            "id": "q88",
+            "text": "¡Coño de su madre,_____!",
+            "blank_count": 1
+        },
+        {
+            "id": "q89",
+            "text": "Es de pinga que fumar monte en Cuyagua con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q90",
+            "text": "Cuando estoy enratonado(a), me siento mejor con_____",
+            "blank_count": 1
+        },
+        {
+            "id": "q91",
+            "text": "Anoche me puse birriondo(a) pensando en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q92",
+            "text": "Estudios científicos demuestran que los hombres no piensan porque tienen _____ en la cabeza.",
+            "blank_count": 1
+        },
+        {
+            "id": "q93",
+            "text": "Ayer el doctor me dijo que tenía _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q94",
+            "text": "Esta noche voy a rumbear con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q95",
+            "text": "_____, la telenovela del año.",
+            "blank_count": 1
+        },
+        {
+            "id": "q96",
+            "text": "La proxima fundación del Teresa Carreño: _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q97",
+            "text": "_____. ¡Cágate!",
+            "blank_count": 1
+        },
+        {
+            "id": "q98",
+            "text": "En mis noches románticas nunca falta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q99",
+            "text": "El día se empavó porque llegó _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q100",
+            "text": "Tienes el marico alborotado porque viste _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q101",
+            "text": "A él dicen Ultramán por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q102",
+            "text": "¿Que me emputa?",
+            "blank_count": 1
+        },
+        {
+            "id": "q103",
+            "text": "¡Váyalo! Dile que estamos pendientes de _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q104",
+            "text": "¿Que me hace voltear los ojos en éxtasis?",
+            "blank_count": 1
+        },
+        {
+            "id": "q105",
+            "text": "¡Sóoooobate! Te diste una yuca en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q106",
+            "text": "Le jurunqué el ojo con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q107",
+            "text": "La razón porque no puedo dormir en las noches: _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q108",
+            "text": "¡Que lechuo! Tienes _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q109",
+            "text": "Cuando me echo unos palos me convierto en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q110",
+            "text": "La ultima vez que fui a la Colonia Tovar me encontré con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q111",
+            "text": "Soy el más pelabolas por _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q112",
+            "text": "Al juez de esta ronda le gusta _____ en las noches.",
+            "blank_count": 1
+        },
+        {
+            "id": "q113",
+            "text": "Mi pareja se convierte en las noches en _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q114",
+            "text": "_____: El último grito de la moda.",
+            "blank_count": 1
+        },
+        {
+            "id": "q115",
+            "text": "_____. Eso no me satisface sexualmente.",
+            "blank_count": 1
+        },
+        {
+            "id": "q116",
+            "text": "¡Si eres farandulero! Te encanta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q117",
+            "text": "¡Mira ese gargajo! Tiene _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q118",
+            "text": "Amanecí enpiernao con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q119",
+            "text": "Miralo que ridículo. Tiene _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q120",
+            "text": "Lo batuqueó con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q121",
+            "text": "Cuando tengo la regla me pongo a _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q122",
+            "text": "A las jevitas sifrinas no les gusta _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q123",
+            "text": "Me da caligueva ir porque me voy a encontrar con _____.",
+            "blank_count": 1
+        },
+        {
+            "id": "q124",
+            "text": "Ese broder está kiluo. Está como si se hubiera tragado _____.",
+            "blank_count": 1
+        }
+    ],
+    "answers": [
+        {
+            "id": "a1",
+            "text": "Un maracucho arrecho"
+        },
+        {
+            "id": "a2",
+            "text": "Un pedacito de mierda pastosa"
+        },
+        {
+            "id": "a3",
+            "text": "Una falda a ras de bollo"
+        },
+        {
+            "id": "a4",
+            "text": "Un pedacito de tres leches, y con la mía, cuatro"
+        },
+        {
+            "id": "a5",
+            "text": "Un cagaleche"
+        },
+        {
+            "id": "a6",
+            "text": "Un picón"
+        },
+        {
+            "id": "a7",
+            "text": "La cojonera que cargo"
+        },
+        {
+            "id": "a8",
+            "text": "Rayar escondido en el baño"
+        },
+        {
+            "id": "a9",
+            "text": "El musiú"
+        },
+        {
+            "id": "a10",
+            "text": "Mi requetonero favorito"
+        },
+        {
+            "id": "a11",
+            "text": "Mi vida de malandro"
+        },
+        {
+            "id": "a12",
+            "text": "Un guevo quebrao"
+        },
+        {
+            "id": "a13",
+            "text": "Ser más tracalero de este grupo"
+        },
+        {
+            "id": "a14",
+            "text": "Saber a que sabe el semén"
+        },
+        {
+            "id": "a15",
+            "text": "Mi machuque"
+        },
+        {
+            "id": "a16",
+            "text": "Una lluvia de diarrea"
+        },
+        {
+            "id": "a17",
+            "text": "Un injerto de paloma"
+        },
+        {
+            "id": "a18",
+            "text": "Tu pipicito"
+        },
+        {
+            "id": "a19",
+            "text": "Una gordita que parece una hallaca mal envuelta"
+        },
+        {
+            "id": "a20",
+            "text": "Amanecer arrecochinados despúes de una pea brutal"
+        },
+        {
+            "id": "a21",
+            "text": "Gemir como una propia loca"
+        },
+        {
+            "id": "a22",
+            "text": "Chuparle la pepa del culo"
+        },
+        {
+            "id": "a23",
+            "text": "Unas putas desempleadas"
+        },
+        {
+            "id": "a24",
+            "text": "Un remamaguevo y mismísimo hijo de la gran puta"
+        },
+        {
+            "id": "a25",
+            "text": "Una orgía tipo todos contra todos"
+        },
+        {
+            "id": "a26",
+            "text": "Un 'puticlu' a pata e mingo"
+        },
+        {
+            "id": "a27",
+            "text": "Un 'La envidia que sientes porque ella tiene las tetas más grandes"
+        },
+        {
+            "id": "a28",
+            "text": "La tristeza que siento cuando mi jíbaro favorito se va de vacaiones"
+        },
+        {
+            "id": "a29",
+            "text": "Un papelón con limón"
+        },
+        {
+            "id": "a30",
+            "text": "Un cachicamo diciéndolle a morrocoy, 'conch... !malparío¡"
+        },
+        {
+            "id": "a31",
+            "text": "La mala leche"
+        },
+        {
+            "id": "a32",
+            "text": "Un perrocalentero neurótico"
+        },
+        {
+            "id": "a33",
+            "text": "Echarse un camarón en una hamaca a orilla del Cinaruco, con la birra en mano, mientras te dan una mamadita"
+        },
+        {
+            "id": "a34",
+            "text": "La moto de Menudo"
+        },
+        {
+            "id": "a35",
+            "text": "Un teletubi maracucho"
+        },
+        {
+            "id": "a36",
+            "text": "El queso que cargo..."
+        },
+        {
+            "id": "a37",
+            "text": "Mi lipa sensual"
+        },
+        {
+            "id": "a38",
+            "text": "Limpiarte el culo por décima vez y que sigua saliendo marrón el papel"
+        },
+        {
+            "id": "a39",
+            "text": "Mi inolvidable experiencia renovando el pasaporte"
+        },
+        {
+            "id": "a40",
+            "text": "Un guiso"
+        },
+        {
+            "id": "a31",
+            "text": "Senda labia para agarrar un culito"
+        },
+        {
+            "id": "a32",
+            "text": "Una morena bien buena"
+        },
+        {
+            "id": "a33",
+            "text": "Un huelepega"
+        },
+        {
+            "id": "a34",
+            "text": "Putas. Muchas putas."
+        },
+        {
+            "id": "a35",
+            "text": "Un cula esfloretado"
+        },
+        {
+            "id": "a36",
+            "text": "Una vergación"
+        },
+        {
+            "id": "a37",
+            "text": "Un tuyuyo en la nalga"
+        },
+        {
+            "id": "a38",
+            "text": "El más lambucio de esta mesa"
+        },
+        {
+            "id": "a39",
+            "text": "Un pajúo"
+        },
+        {
+            "id": "a40",
+            "text": "Parapetear la vaina"
+        },
+        {
+            "id": "a41",
+            "text": "Yo alborotado, bailando en pelotas"
+        },
+        {
+            "id": "a42",
+            "text": "Andar burda de chola"
+        },
+        {
+            "id": "a43",
+            "text": "El mío"
+        },
+        {
+            "id": "a44",
+            "text": "El sapo del salón"
+        },
+        {
+            "id": "a45",
+            "text": "Esta enratonado"
+        },
+        {
+            "id": "a46",
+            "text": "Un mojoneao"
+        },
+        {
+            "id": "a47",
+            "text": "¿Seré o no seré?"
+        },
+        {
+            "id": "a48",
+            "text": "Mis decisiones cuando estoy curdo"
+        },
+        {
+            "id": "a49",
+            "text": "Miss Venezuela"
+        },
+        {
+            "id": "a50",
+            "text": "Singar"
+        },
+        {
+            "id": "a51",
+            "text": "Girar las manos con los ojos cerrados y gritando como una loca"
+        },
+        {
+            "id": "a52",
+            "text": "Pelo e cuca"
+        },
+        {
+            "id": "a53",
+            "text": "Gozar un puyero viviendo culitos en la playa"
+        },
+        {
+            "id": "a54",
+            "text": "Recoger mis chécheres e irme pal coño"
+        },
+        {
+            "id": "a55",
+            "text": "Una redoblona e coñazos"
+        },
+        {
+            "id": "a56",
+            "text": "Por el culo"
+        },
+        {
+            "id": "a57",
+            "text": "Chévere cambur"
+        },
+        {
+            "id": "a58",
+            "text": "Ser un pantallero"
+        },
+        {
+            "id": "a59",
+            "text": "Mis nalgas ricas"
+        },
+        {
+            "id": "a60",
+            "text": "La mega pea que voy a cargar dentro de un rato"
+        },
+        {
+            "id": "a61",
+            "text": "Estar más ladillado que el Niño Jesús en Junio"
+        },
+        {
+            "id": "a62",
+            "text": "Estoy vuelto mierda"
+        },
+        {
+            "id": "a63",
+            "text": "Un sifrinito mariquito"
+        },
+        {
+            "id": "a64",
+            "text": "Un pupú catire"
+        },
+        {
+            "id": "a65",
+            "text": "Gochilandia"
+        },
+        {
+            "id": "a66",
+            "text": "Tirar la toalla"
+        },
+        {
+            "id": "a67",
+            "text": "Un secuestro exprés"
+        },
+        {
+            "id": "a68",
+            "text": "Un aguevoneao"
+        },
+        {
+            "id": "a69",
+            "text": "Sacarte la piedra"
+        },
+        {
+            "id": "a70",
+            "text": "Un pasón"
+        },
+        {
+            "id": "a71",
+            "text": "Bajarte de la mula"
+        },
+        {
+            "id": "a72",
+            "text": "Una trifulca"
+        },
+        {
+            "id": "a73",
+            "text": "Párgula"
+        },
+        {
+            "id": "a74",
+            "text": "La bajadita"
+        },
+        {
+            "id": "a75",
+            "text": "Tu más fiel jalabolas"
+        },
+        {
+            "id": "a76",
+            "text": "Lamparear a mi pana"
+        },
+        {
+            "id": "a77",
+            "text": "Una cuerda de mamaguevos"
+        },
+        {
+            "id": "a78",
+            "text": "Estar veraneao"
+        },
+        {
+            "id": "a79",
+            "text": "Amanece abollado"
+        },
+        {
+            "id": "a80",
+            "text": "Pasar roncha"
+        },
+        {
+            "id": "a81",
+            "text": "Mi algo pana"
+        },
+        {
+            "id": "a82",
+            "text": "Una bichita"
+        },
+        {
+            "id": "a83",
+            "text": "Un machito furruqueao"
+        },
+        {
+            "id": "a84",
+            "text": "Un carajito tapao"
+        },
+        {
+            "id": "a85",
+            "text": "Tu vecina chismosa"
+        },
+        {
+            "id": "a86",
+            "text": "El azote del barrio"
+        },
+        {
+            "id": "a87",
+            "text": "Un muérdano, desgraciado, y feo. Que además no se le para"
+        },
+        {
+            "id": "a88",
+            "text": "La cuaima de esta casa"
+        },
+        {
+            "id": "a89",
+            "text": "Volar papagayo"
+        },
+        {
+            "id": "a90",
+            "text": "Cobrar peaje"
+        },
+        {
+            "id": "a91",
+            "text": "Estar papiao"
+        },
+        {
+            "id": "a92",
+            "text": "¿Arrecho yo?"
+        },
+        {
+            "id": "a93",
+            "text": "Tirarse un peo bajo la sábana y airearlo"
+        },
+        {
+            "id": "a94",
+            "text": "Una jeva fitness total"
+        },
+        {
+            "id": "a95",
+            "text": "Un bachaquero"
+        },
+        {
+            "id": "a96",
+            "text": "Soltar un peo en el medio de un bululú"
+        },
+        {
+            "id": "a97",
+            "text": "Una callapa"
+        },
+        {
+            "id": "a98",
+            "text": "Un paco matraquero"
+        },
+        {
+            "id": "a99",
+            "text": "Soplar el Bistec"
+        },
+        {
+            "id": "a100",
+            "text": "Un soponcio"
+        },
+        {
+            "id": "a101",
+            "text": "Un metiche"
+        },
+        {
+            "id": "a102",
+            "text": "Botar piedra"
+        },
+        {
+            "id": "a103",
+            "text": "Un pajazo mental"
+        },
+        {
+            "id": "a104",
+            "text": "El 'Verano' que lleva la persona a mi derecha"
+        },
+        {
+            "id": "a105",
+            "text": "Los panas que siempre te meten en peos"
+        },
+        {
+            "id": "a106",
+            "text": "Irme pal coño"
+        },
+        {
+            "id": "a107",
+            "text": "Un rancho humilde, pero con unas monitas tetonas adentro"
+        },
+        {
+            "id": "a108",
+            "text": "Tu novia calientaguevo"
+        },
+        {
+            "id": "a109",
+            "text": "Tus mariqueras de siempre"
+        },
+        {
+            "id": "a110",
+            "text": "Una lata de Pirulín encaletada"
+        },
+        {
+            "id": "a111",
+            "text": "Un alto chivo"
+        },
+        {
+            "id": "a112",
+            "text": "Un alto chivo"
+        },
+        {
+            "id": "a113",
+            "text": "Echarnos un barranco después de este juego en los tubos"
+        },
+        {
+            "id": "a114",
+            "text": "Una cagazón"
+        },
+        {
+            "id": "a115",
+            "text": "Un pajazo encaletao en el baño"
+        },
+        {
+            "id": "a116",
+            "text": "Querer conocer a María Guevara para ver si de verdad tenía las tetas grandes"
+        },
+        {
+            "id": "a117",
+            "text": "Un abuelito metiéndote mano"
+        },
+        {
+            "id": "a118",
+            "text": "Tu abuela cantando boleros a todo dar en pelotas"
+        },
+        {
+            "id": "a119",
+            "text": "Estar más quesudo queel cura del colegio"
+        },
+        {
+            "id": "a120",
+            "text": "La cagada del pato macho"
+        },
+        {
+            "id": "a121",
+            "text": "Reventarse a guarapitas"
+        },
+        {
+            "id": "a122",
+            "text": "Un mamarracho"
+        },
+        {
+            "id": "a123",
+            "text": "Un gocho encabronao"
+        },
+        {
+            "id": "a124",
+            "text": "Un pana burda de caleta"
+        },
+        {
+            "id": "a125",
+            "text": "Tener violín"
+        },
+        {
+            "id": "a126",
+            "text": "Poner la torta"
+        },
+        {
+            "id": "a127",
+            "text": "Comer mierda"
+        },
+        {
+            "id": "a128",
+            "text": "Tú, mi cosito"
+        },
+        {
+            "id": "a129",
+            "text": "Que me den por el culo"
+        },
+        {
+            "id": "a130",
+            "text": "Un bingo bailable"
+        },
+        {
+            "id": "a131",
+            "text": "Un marico"
+        },
+        {
+            "id": "a132",
+            "text": "Sacarse la visa americana"
+        },
+        {
+            "id": "a133",
+            "text": "Un chichón de piso"
+        },
+        {
+            "id": "a134",
+            "text": "Un maricotriste"
+        },
+        {
+            "id": "a135",
+            "text": "Alquien tan chévere y lindo como tú"
+        },
+        {
+            "id": "a136",
+            "text": "Gozar un puyero"
+        },
+        {
+            "id": "a137",
+            "text": "Tus corotos"
+        },
+        {
+            "id": "a138",
+            "text": "Mi primo, el que bota la bola"
+        },
+        {
+            "id": "a139",
+            "text": "Ser balurdo"
+        },
+        {
+            "id": "a140",
+            "text": "Un bingo bailable"
+        },
+        {
+            "id": "a141",
+            "text": "Una mamadera e gallo"
+        },
+        {
+            "id": "a142",
+            "text": "Dos kilos de coca"
+        },
+        {
+            "id": "a143",
+            "text": "Otra vez tú y tus mariqueras"
+        },
+        {
+            "id": "a144",
+            "text": "Una pecueca hedionda"
+        },
+        {
+            "id": "a145",
+            "text": "Una pecueca hedionda"
+        },
+        {
+            "id": "a146",
+            "text": "Ser un guevo pelao"
+        },
+        {
+            "id": "a147",
+            "text": "Un polvo de 10 segundos"
+        },
+        {
+            "id": "a148",
+            "text": "Nifú Nifá, versión porno"
+        },
+        {
+            "id": "a149",
+            "text": "Una coñaza entre mochos alebrestados"
+        },
+        {
+            "id": "a150",
+            "text": "Tu abuela"
+        },
+        {
+            "id": "a151",
+            "text": "Un maracucho lipuo"
+        },
+        {
+            "id": "a152",
+            "text": "¡Naguará!"
+        },
+        {
+            "id": "a153",
+            "text": "Un polvo con la cahifa"
+        },
+        {
+            "id": "a154",
+            "text": "Una guerra de espaditas"
+        },
+        {
+            "id": "a155",
+            "text": "El queso que tengo"
+        },
+        {
+            "id": "a156",
+            "text": "Petare"
+        },
+        {
+            "id": "a157",
+            "text": "Sacar 'Cero uno'"
+        },
+        {
+            "id": "a158",
+            "text": "El Tocuyo"
+        },
+        {
+            "id": "a159",
+            "text": "Armar una guachafita"
+        },
+        {
+            "id": "a160",
+            "text": "Un paltó comprado en el CCCCCCCCT"
+        },
+        {
+            "id": "a161",
+            "text": "Un mango bajito"
+        },
+        {
+            "id": "a162",
+            "text": "El año de la pera"
+        },
+        {
+            "id": "a163",
+            "text": "El 5 y 6"
+        },
+        {
+            "id": "a164",
+            "text": "Muuuuucha ladilla"
+        },
+        {
+            "id": "a165",
+            "text": "Los tres reyes magos rumbeando en los tubos"
+        },
+        {
+            "id": "a166",
+            "text": "Hablar paja"
+        },
+        {
+            "id": "a167",
+            "text": "Un tetero piche"
+        },
+        {
+            "id": "a168",
+            "text": "El pichirre"
+        },
+        {
+            "id": "a169",
+            "text": "¡Que lindo! Fe y Alegría"
+        },
+        {
+            "id": "a170",
+            "text": "Un concierto de harpa eléctrica"
+        },
+        {
+            "id": "a171",
+            "text": "Estar encucao"
+        },
+        {
+            "id": "a172",
+            "text": "Tirarme un peo sin cagarme los interiores"
+        },
+        {
+            "id": "a173",
+            "text": "Un maricoteo con recueste de tostón"
+        },
+        {
+            "id": "a174",
+            "text": "Andar en pelotas, tipo tranquilo"
+        },
+        {
+            "id": "a175",
+            "text": "El chalequeo que te monté. Por ñero"
+        },
+        {
+            "id": "a176",
+            "text": "Unos cocos recién hechos. Uy, que rico"
+        },
+        {
+            "id": "a177",
+            "text": "Palearnos una vaina"
+        },
+        {
+            "id": "a178",
+            "text": "Creerse la gran vaina"
+        },
+        {
+            "id": "a179",
+            "text": "Un resuelve"
+        },
+        {
+            "id": "a180",
+            "text": "Un amapuche"
+        },
+        {
+            "id": "a181",
+            "text": "Una perra en celo"
+        },
+        {
+            "id": "a182",
+            "text": "Estar más hediondo que trapito de heladero"
+        },
+        {
+            "id": "a183",
+            "text": "¿Vas a seguir Abigail?"
+        },
+        {
+            "id": "a184",
+            "text": "Jalar bolas"
+        },
+        {
+            "id": "a185",
+            "text": "Una gordita en tanga"
+        },
+        {
+            "id": "a186",
+            "text": "Una vaina esguañangaa"
+        },
+        {
+            "id": "a187",
+            "text": "Una vaina rara"
+        },
+        {
+            "id": "a188",
+            "text": "La pepa"
+        },
+        {
+            "id": "a189",
+            "text": "Un pingazo"
+        },
+        {
+            "id": "a190",
+            "text": "Algo burda de cagante"
+        },
+        {
+            "id": "a191",
+            "text": "Un patuleco"
+        },
+        {
+            "id": "a192",
+            "text": "Jurungar un papo"
+        },
+        {
+            "id": "a193",
+            "text": "Mis peos con la suegra"
+        },
+        {
+            "id": "a194",
+            "text": "Un cariaquito morao que me de buena leche"
+        },
+        {
+            "id": "a195",
+            "text": "Los motorizados de mierda"
+        },
+        {
+            "id": "a196",
+            "text": "Tener el guevo recalentao (mojonero, tu nunca tiras)"
+        },
+        {
+            "id": "a197",
+            "text": "Los macundales"
+        },
+        {
+            "id": "a198",
+            "text": "Unas perras"
+        },
+        {
+            "id": "a199",
+            "text": "Un apartaco en Altamira"
+        },
+        {
+            "id": "a200",
+            "text": "Tu lindo prepucio"
+        },
+        {
+            "id": "a201",
+            "text": "Una cuca peluísima"
+        },
+        {
+            "id": "a202",
+            "text": "Una parchita pero no la fruta"
+        },
+        {
+            "id": "a203",
+            "text": "Un ´Siete potencia´ playero"
+        },
+        {
+            "id": "a204",
+            "text": "Las bolas guindando por las rodillas"
+        },
+        {
+            "id": "a205",
+            "text": "Un guayoyo frío"
+        },
+        {
+            "id": "a206",
+            "text": "Un chancletazo por la jeta"
+        },
+        {
+            "id": "a207",
+            "text": "Mi chuchita"
+        },
+        {
+            "id": "a208",
+            "text": "Un negrito de Barlovento"
+        },
+        {
+            "id": "a209",
+            "text": "Esa mamá a la que todos le queremos dar"
+        },
+        {
+            "id": "a210",
+            "text": "Un pelo e guama"
+        },
+        {
+            "id": "a211",
+            "text": "Un triki traki"
+        },
+        {
+            "id": "a212",
+            "text": "Echarse un polvo zángano"
+        },
+        {
+            "id": "a213",
+            "text": "Andar con una guachafita"
+        },
+        {
+            "id": "a214",
+            "text": "Echarse 'copetón' bañarse en el mar, revolcarse en la arena y salir directo a ponerse un flu"
+        },
+        {
+            "id": "a215",
+            "text": "Casi acabo..."
+        },
+        {
+            "id": "a216",
+            "text": "Un encuentro, cara a cara con 'Jeison' el choro"
+        },
+        {
+            "id": "a217",
+            "text": "Chalequearte todos los días, por el resto de mi vida"
+        },
+        {
+            "id": "a218",
+            "text": "Una cuerda de mamaguevos. Todos"
+        },
+        {
+            "id": "a219",
+            "text": "Los que la dan de 'sabelotodo' en feisbuk"
+        },
+        {
+            "id": "a220",
+            "text": "Disimular la carpa"
+        },
+        {
+            "id": "a221",
+            "text": "El tamaño de tu escroto"
+        },
+        {
+            "id": "a222",
+            "text": "El portu"
+        },
+        {
+            "id": "a223",
+            "text": "Una salsa arrabalera"
+        },
+        {
+            "id": "a224",
+            "text": "Una arepa de chiguire esmechao"
+        },
+        {
+            "id": "a225",
+            "text": "Acabar pensando en tu mamá"
+        },
+        {
+            "id": "a226",
+            "text": "Tu tetas sudadas, pero ricas igual"
+        },
+        {
+            "id": "a227",
+            "text": "La totona más grande de esta casa"
+        },
+        {
+            "id": "a228",
+            "text": "Un cojeculo de maricos desatados"
+        },
+        {
+            "id": "a229",
+            "text": "Un cabeza de guevo"
+        },
+        {
+            "id": "a230",
+            "text": "La mentada de madre que le di"
+        },
+        {
+            "id": "a231",
+            "text": "Jalar caña como sendo bestia"
+        },
+        {
+            "id": "a232",
+            "text": "Echar un vainón"
+        },
+        {
+            "id": "a233",
+            "text": "Echar un vainón"
+        },
+        {
+            "id": "a234",
+            "text": "Un tripeo"
+        },
+        {
+            "id": "a235",
+            "text": "Una botella más de caballito frenao"
+        },
+        {
+            "id": "a236",
+            "text": "Una caimanera"
+        },
+        {
+            "id": "a237",
+            "text": "Recostarte el tostón"
+        },
+        {
+            "id": "a238",
+            "text": "Un peo en chinchorro"
+        },
+        {
+            "id": "a239",
+            "text": "Tener que explicarle a un culito que 'hace frio' cuando te lo sacas"
+        },
+        {
+            "id": "a240",
+            "text": "Ponerte cabilla, pero tener el pipí chiquito"
+        },
+        {
+            "id": "a241",
+            "text": "Tener el guevo de oro"
+        },
+        {
+            "id": "a242",
+            "text": "Cagar mojones secos"
+        },
+        {
+            "id": "a243",
+            "text": "Curda en cantidades industriales"
+        },
+        {
+            "id": "a244",
+            "text": "Culeando"
+        },
+        {
+            "id": "a245",
+            "text": "Estar goleao"
+        },
+        {
+            "id": "a246",
+            "text": "La última vez que tuve ratón moral"
+        },
+        {
+            "id": "a247",
+            "text": "Jaimito, mi amigo imaginario"
+        },
+        {
+            "id": "a248",
+            "text": "El papelón que hice"
+        },
+        {
+            "id": "a249",
+            "text": "Pelar bolas parejo"
+        },
+        {
+            "id": "a250",
+            "text": "Pelar bolas parejo"
+        },
+        {
+            "id": "a251",
+            "text": "La metiche de este grupo"
+        },
+        {
+            "id": "a252",
+            "text": "Un corte de totuma"
+        },
+        {
+            "id": "a253",
+            "text": "Una guarapita bien resuelta"
+        },
+        {
+            "id": "a254",
+            "text": "Upa cachete"
+        },
+        {
+            "id": "a255",
+            "text": "Los ojitos con los que me mirabas anoche"
+        },
+        {
+            "id": "a256",
+            "text": "Hacer una vaca"
+        },
+        {
+            "id": "a257",
+            "text": "Los pelabolas de Petare"
+        },
+        {
+            "id": "a258",
+            "text": "Unas tetas bien montadas"
+        },
+        {
+            "id": "a259",
+            "text": "La mamá de mi pana que parace una MILF"
+        },
+        {
+            "id": "a260",
+            "text": "Alta caligueva"
+        },
+        {
+            "id": "a261",
+            "text": "Un examen papaya"
+        },
+        {
+            "id": "a262",
+            "text": "El imperio"
+        },
+        {
+            "id": "a263",
+            "text": "Echar el pire para que no te agarren los pacos"
+        },
+        {
+            "id": "a264",
+            "text": "Un lepe"
+        },
+        {
+            "id": "a265",
+            "text": "Pararte un collar de bolas criollas"
+        },
+        {
+            "id": "a266",
+            "text": "Lo brutiviri que eres"
+        },
+        {
+            "id": "a267",
+            "text": "Mi  totona"
+        },
+        {
+            "id": "a268",
+            "text": "Dejar el pelero"
+        },
+        {
+            "id": "a269",
+            "text": "Tus bolas sudadas"
+        },
+        {
+            "id": "a270",
+            "text": "El guachimán"
+        },
+        {
+            "id": "a271",
+            "text": "Estar rueda libre"
+        },
+        {
+            "id": "a272",
+            "text": "Hablar con un virolo y no saber a cual ojo ver"
+        },
+        {
+            "id": "a273",
+            "text": "Un patatús"
+        },
+        {
+            "id": "a274",
+            "text": "Un yeyo"
+        },
+        {
+            "id": "a275",
+            "text": "Un rompecolchón"
+        },
+        {
+            "id": "a276",
+            "text": "Un guevo tristísimo"
+        },
+        {
+            "id": "a277",
+            "text": "El punto mágico donde se desaparece el hilo dental entre las nalgas"
+        },
+        {
+            "id": "a278",
+            "text": "Un cachetón por la jeta"
+        },
+        {
+            "id": "a279",
+            "text": "Por atrás es mas rico"
+        },
+        {
+            "id": "a280",
+            "text": "Tus nalguitas ricas"
+        },
+        {
+            "id": "a281",
+            "text": "Tus sueños eróticos con gorditas"
+        },
+        {
+            "id": "a282",
+            "text": "Errrr guevo peluo"
+        },
+        {
+            "id": "a283",
+            "text": "El placer que siento al lanzar un fosforito en una parada de autobús full de gente"
+        },
+        {
+            "id": "a284",
+            "text": "¡Va sié mijo!"
+        },
+        {
+            "id": "a285",
+            "text": "Un rolo e vivo"
+        },
+        {
+            "id": "a286",
+            "text": "Una explosión guevotrónica"
+        },
+        {
+            "id": "a287",
+            "text": "Meter la pata"
+        },
+        {
+            "id": "a288",
+            "text": "¡Ñiooooooo!"
+        },
+        {
+            "id": "a289",
+            "text": "Encarparme en la playa"
+        },
+        {
+            "id": "a290",
+            "text": "Voy esmachetado como arrrrma que lleva errrrr diablo"
+        },
+        {
+            "id": "a291",
+            "text": "Bucearme un culo"
+        },
+        {
+            "id": "a292",
+            "text": "Abrirse una cuca"
+        },
+        {
+            "id": "a293",
+            "text": "Un perolito"
+        },
+        {
+            "id": "a294",
+            "text": "Zamurear"
+        },
+        {
+            "id": "a295",
+            "text": "Morocotas, lochas,y puyas"
+        },
+        {
+            "id": "a296",
+            "text": "La arrechera que cargo"
+        },
+        {
+            "id": "a297",
+            "text": "Lamparear a tu pana para que no pueda tirar"
+        },
+        {
+            "id": "a298",
+            "text": "Comer perrocaliente. Literalmente"
+        },
+        {
+            "id": "a299",
+            "text": "Un papo mollejúo"
+        },
+        {
+            "id": "a300",
+            "text": "Un desnalgue"
+        },
+        {
+            "id": "a301",
+            "text": "Mis cojones"
+        },
+        {
+            "id": "a302",
+            "text": "Una pinga choreta"
+        },
+        {
+            "id": "a303",
+            "text": "Un roncito en mano"
+        },
+        {
+            "id": "a304",
+            "text": "Un transfor coquetón abrazándote"
+        },
+        {
+            "id": "a305",
+            "text": "Un jujú"
+        },
+        {
+            "id": "a306",
+            "text": "Amanecer con un par de Miss Venezuelas"
+        },
+        {
+            "id": "a307",
+            "text": "Un tumbarancho"
+        },
+        {
+            "id": "a308",
+            "text": "Montarte cachos"
+        },
+        {
+            "id": "a309",
+            "text": "El negro de WhatsApp"
+        },
+        {
+            "id": "a310",
+            "text": "Un Cocosette"
+        },
+        {
+            "id": "a311",
+            "text": "El olorcito entre las bolas. Ese que uno se pasa la mano y se la huele"
+        },
+        {
+            "id": "a312",
+            "text": "Un gargajo verdecito y pastoso"
+        },
+        {
+            "id": "a313",
+            "text": "Un culo tan aguado que cuando se tira un peo, levanta polvo"
+        },
+        {
+            "id": "a314",
+            "text": "Mi ex"
+        },
+        {
+            "id": "a315",
+            "text": "Una rumba con putas, drogas, y enanos malabaristas"
+        },
+        {
+            "id": "a316",
+            "text": "El más morboso de esta mesa"
+        },
+        {
+            "id": "a317",
+            "text": "Un perro caliente bien resuelto, con extra salsa de ajo. Pal aliento y tal"
+        },
+        {
+            "id": "a318",
+            "text": "Una chivera en La Panamericana"
+        },
+        {
+            "id": "a319",
+            "text": "Un hilo dental con frenazo e caucho"
+        },
+        {
+            "id": "a320",
+            "text": "Tres guevos a la vez"
+        },
+        {
+            "id": "a321",
+            "text": "'Tuuuuuuuuki, Susuki, Yamaha y kawasaki. Sóbate pajuo.'"
+        },
+        {
+            "id": "a322",
+            "text": "Tu cara e culo"
+        },
+        {
+            "id": "a323",
+            "text": "Un comecasquillo"
+        },
+        {
+            "id": "a324",
+            "text": "Coguerle el tumbado"
+        },
+        {
+            "id": "a325",
+            "text": "Un zaperoco"
+        },
+        {
+            "id": "a326",
+            "text": "Perencejo y sutanejo"
+        },
+        {
+            "id": "a327",
+            "text": "Un pelabolas"
+        },
+        {
+            "id": "a328",
+            "text": "Tres lucas"
+        },
+        {
+            "id": "a329",
+            "text": "Un firi firi"
+        },
+        {
+            "id": "a330",
+            "text": "Tocarnos todos juntos"
+        },
+        {
+            "id": "a331",
+            "text": "Los jalabolas"
+        },
+        {
+            "id": "a332",
+            "text": "Mi estado de pánico cuando mi jeva me agarra el teléfono"
+        },
+        {
+            "id": "a333",
+            "text": "El gesto universal entre panas que indica, 'yo le doy'."
+        },
+        {
+            "id": "a334",
+            "text": "Mocho y virolo, pero coronando"
+        },
+        {
+            "id": "a335",
+            "text": "Mi momento favorito del día para cagar"
+        },
+        {
+            "id": "a336",
+            "text": "Una catira que tira"
+        },
+        {
+            "id": "a337",
+            "text": "Los dedos de chorizo del doctor durante el examen de próstata"
+        },
+        {
+            "id": "a338",
+            "text": "Pretender que me sabe a bola"
+        },
+        {
+            "id": "a339",
+            "text": "Pifear"
+        },
+        {
+            "id": "a340",
+            "text": "Pararte bolas"
+        },
+        {
+            "id": "a341",
+            "text": "Un lambucio"
+        },
+        {
+            "id": "a342",
+            "text": "Los guarimberos"
+        },
+        {
+            "id": "a343",
+            "text": "Ser rolitranco de mamaguevo"
+        },
+        {
+            "id": "a344",
+            "text": "Un niño de rancho"
+        },
+        {
+            "id": "a345",
+            "text": "Mear fuera del perol"
+        },
+        {
+            "id": "a346",
+            "text": "Una cachapera birrionda"
+        },
+        {
+            "id": "a347",
+            "text": "Un paseo a la playa con unas 'prepago'"
+        },
+        {
+            "id": "a348",
+            "text": "Un chalequeo"
+        },
+        {
+            "id": "a349",
+            "text": "Ver a mi abuela en pelotas"
+        },
+        {
+            "id": "a350",
+            "text": "Solo la puntica"
+        },
+        {
+            "id": "a351",
+            "text": "Gaitas y pupitres"
+        },
+        {
+            "id": "a352",
+            "text": "Volverte como loca con un reguetón a full volumen"
+        },
+        {
+            "id": "a353",
+            "text": "Un carrito de helados Tío Rico"
+        },
+        {
+            "id": "a354",
+            "text": "Los transfor de La Libertador"
+        },
+        {
+            "id": "a355",
+            "text": "Cagarme de la risa"
+        },
+        {
+            "id": "a356",
+            "text": "El papá de los helados"
+        },
+        {
+            "id": "a357",
+            "text": "Un caribeo"
+        },
+        {
+            "id": "a358",
+            "text": "Rolo e peo"
+        },
+        {
+            "id": "a359",
+            "text": "Una empanada de cazón yendo a la playa, directo después de la rumbita"
+        },
+        {
+            "id": "a360",
+            "text": "Playa el agua"
+        },
+        {
+            "id": "a361",
+            "text": "Los Roques"
+        },
+        {
+            "id": "a362",
+            "text": "Zopotocientos trillones de bolívares (un penny)"
+        },
+        {
+            "id": "a363",
+            "text": "El que todos sabamos tiene el pipí chiquito"
+        },
+        {
+            "id": "a364",
+            "text": "Sendo culo"
+        },
+        {
+            "id": "a365",
+            "text": "Unas alpargatas Ferragamo"
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from random import randint, sample
+from random import randint
 from typing import Any
 from uuid import uuid4
 
@@ -15,6 +15,8 @@ from app.models.round_answer import RoundAnswer
 from app.models.user import User
 from app.repositories.game_repository import game_repository
 from app.repositories.user_repository import ensure_clerk_user
+from app.core.ws_manager import ws_manager
+from app.services.card_service import card_service
 
 
 def _game_to_dict(game: Game) -> dict[str, Any]:
@@ -83,14 +85,14 @@ class GameService:
     async def _deal_cards(
         self, db: AsyncSession, game_id: str, players: list[GamePlayer]
     ) -> None:
-        pool = [f"a-{i}" for i in range(1, 500)]
         n = len(players)
         need = 10 * n
-        if need > len(pool):
-            raise ValueError("Not enough virtual answer cards in pool")
-        picked = sample(pool, need)
+        if need > card_service.answer_count:
+            raise ValueError("Not enough answer cards in pool")
+        picked = card_service.get_random_answers(need)
+        picked_ids = [a.id for a in picked]
         for i, p in enumerate(players):
-            chunk = picked[i * 10 : (i + 1) * 10]
+            chunk = picked_ids[i * 10 : (i + 1) * 10]
             row = PlayerCard(user_id=p.user_id, game_id=game_id, cards=list(chunk))
             await game_repository.add(db, row)
 
@@ -124,13 +126,19 @@ class GameService:
         await game_repository.add(db, game)
         gp = GamePlayer(id=str(uuid4()), game_id=gid, user_id=user_id, score=0)
         await game_repository.add(db, gp)
-        return _game_to_dict(game)
+        result = _game_to_dict(game)
+        await ws_manager.send_to_game(gid, "game_created", result)
+        return result
 
-    async def get_game_by_id(self, db: AsyncSession, game_id: str) -> dict[str, Any] | None:
+    async def get_game_by_id(
+        self, db: AsyncSession, game_id: str
+    ) -> dict[str, Any] | None:
         game = await game_repository.get_game_by_id(db, game_id)
         return _game_to_dict(game) if game else None
 
-    async def get_game_by_code(self, db: AsyncSession, code: str) -> dict[str, Any] | None:
+    async def get_game_by_code(
+        self, db: AsyncSession, code: str
+    ) -> dict[str, Any] | None:
         game = await game_repository.get_game_by_code(db, code)
         return _game_to_dict(game) if game else None
 
@@ -151,7 +159,11 @@ class GameService:
 
         gp = GamePlayer(id=str(uuid4()), game_id=game.id, user_id=user_id, score=0)
         await game_repository.add(db, gp)
-        return _game_to_dict(game)
+        result = _game_to_dict(game)
+        await ws_manager.send_to_game(
+            game.id, "player_joined", {"user_id": user_id, "game": result}
+        )
+        return result
 
     async def get_game_players(
         self, db: AsyncSession, game_id: str
@@ -162,7 +174,10 @@ class GameService:
         players = list(await game_repository.list_players(db, game_id))
         uids = {p.user_id for p in players}
         users = await _load_users_map(db, uids)
-        return [_player_to_dict(p, game.host_player_id, users.get(p.user_id)) for p in players]
+        return [
+            _player_to_dict(p, game.host_player_id, users.get(p.user_id))
+            for p in players
+        ]
 
     async def start_game(
         self, db: AsyncSession, user_id: str, game_id: str
@@ -180,11 +195,12 @@ class GameService:
             raise ValueError("You are not in this game")
 
         first_judge = players[0].user_id
+        question = card_service.get_random_question()
         rnd = Round(
             id=str(uuid4()),
             game_id=game_id,
             round_number=1,
-            question_card_id=f"q-{randint(1, 400)}",
+            question_card_id=question.id,
             judge_user_id=first_judge,
             status="submitting",
             winning_answer_id=None,
@@ -195,9 +211,14 @@ class GameService:
         await db.flush()
 
         await self._deal_cards(db, game_id, players)
-        return _round_to_dict(rnd)
+        round_data = _round_to_dict(rnd)
+        await ws_manager.send_to_game(game_id, "game_started", {"round": round_data})
+        await ws_manager.send_to_game(game_id, "new_round", round_data)
+        return round_data
 
-    async def get_last_round(self, db: AsyncSession, game_id: str) -> dict[str, Any] | None:
+    async def get_last_round(
+        self, db: AsyncSession, game_id: str
+    ) -> dict[str, Any] | None:
         r = await game_repository.get_last_round(db, game_id)
         return _round_to_dict(r) if r else None
 
@@ -220,17 +241,20 @@ class GameService:
 
         next_num = last.round_number + 1
         judge_idx = (next_num - 1) % len(players)
+        question = card_service.get_random_question()
         nxt = Round(
             id=str(uuid4()),
             game_id=game_id,
             round_number=next_num,
-            question_card_id=f"q-{randint(1, 400)}",
+            question_card_id=question.id,
             judge_user_id=players[judge_idx].user_id,
             status="submitting",
             winning_answer_id=None,
         )
         await game_repository.add(db, nxt)
-        return _round_to_dict(nxt)
+        round_data = _round_to_dict(nxt)
+        await ws_manager.send_to_game(game_id, "new_round", round_data)
+        return round_data
 
     async def create_round_answer(
         self, db: AsyncSession, round_id: str, user_id: str, cards_used: list[str]
@@ -258,16 +282,29 @@ class GameService:
             for c in clean:
                 if c in current:
                     current.remove(c)
-            pool = [f"a-{i}" for i in range(1, 500)]
-            avail = [x for x in pool if x not in current]
-            new_ones = sample(avail, min(len(clean), len(avail))) if avail else []
-            current.extend(new_ones)
+            avail = [
+                card_service.get_answer_by_id(aid).id
+                for aid in current
+                if card_service.get_answer_by_id(aid)
+            ]
+            used_ids = set(current)
+            new_cards = []
+            for _ in range(len(clean)):
+                card = card_service.get_random_answer()
+                if card.id not in used_ids:
+                    new_cards.append(card.id)
+                    used_ids.add(card.id)
+                if len(new_cards) >= len(clean):
+                    break
+            current.extend(new_cards)
             row.cards = current
             db.add(row)
             await db.flush()
 
         prof = await db.get(User, user_id)
-        return _answer_to_dict(ans, prof)
+        answer_data = _answer_to_dict(ans, prof)
+        await ws_manager.send_to_game(rnd.game_id, "answer_submitted", answer_data)
+        return answer_data
 
     async def get_round_answers(
         self, db: AsyncSession, round_id: str
@@ -320,7 +357,23 @@ class GameService:
             game.status = "finished"
             db.add(game)
             await db.flush()
+            await ws_manager.send_to_game(
+                game.id,
+                "game_finished",
+                {
+                    "winner_user_id": answer.user_id,
+                    "winner_score": gplayer.score,
+                },
+            )
 
+        await ws_manager.send_to_game(
+            rnd.game_id,
+            "round_finished",
+            {
+                "round_id": rnd.id,
+                "winning_answer_id": winning_answer_id,
+            },
+        )
         return {"success": True}
 
     async def get_player_cards(
@@ -351,8 +404,12 @@ class GameService:
         await game_repository.delete_player(db, game_id, user_id)
         await game_repository.delete_player_cards(db, game_id, user_id)
         remaining = await game_repository.count_players(db, game_id)
+        await ws_manager.send_to_game(
+            game_id, "player_left", {"user_id": user_id, "remaining": remaining}
+        )
         if remaining == 0:
             await game_repository.delete_game_cascade(db, game_id)
+            await ws_manager.send_to_game(game_id, "game_deleted", {"game_id": game_id})
         return {"success": True}
 
 
