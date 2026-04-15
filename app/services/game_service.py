@@ -247,6 +247,9 @@ class GameService:
         last = await game_repository.get_last_round(db, game_id)
         if not last:
             raise ValueError("No previous round found")
+        
+        if last.status != "finished":
+            raise ValueError("Current round must be finished before starting the next one")
 
         next_num = last.round_number + 1
         judge_idx = (next_num - 1) % len(players)
