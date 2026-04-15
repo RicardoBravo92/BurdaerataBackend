@@ -2,6 +2,7 @@ from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -18,10 +19,7 @@ elif database_url.startswith("postgresql://"):
 engine = create_async_engine(
     database_url,
     echo=True,
-    pool_pre_ping=True,      # test connections before use (handles Neon idle drops)
-    pool_recycle=300,        # recycle connections every 5 minutes
-    pool_size=5,
-    max_overflow=10,
+    poolclass=NullPool,   # Neon serverless: fresh connection per request, no stale pool issues
 )
 
 AsyncSessionLocal = sessionmaker(
