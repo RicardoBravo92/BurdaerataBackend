@@ -31,8 +31,8 @@ def _game_to_dict(game: Game) -> dict[str, Any]:
     }
 
 
-def _round_to_dict(r: Round) -> dict[str, Any]:
-    return {
+def _round_to_dict(r: Round, judge_profile: User | None = None) -> dict[str, Any]:
+    out = {
         "id": r.id,
         "game_id": r.game_id,
         "judge_user_id": r.judge_user_id,
@@ -41,6 +41,9 @@ def _round_to_dict(r: Round) -> dict[str, Any]:
         "status": r.status,
         "winning_answer_id": r.winning_answer_id,
     }
+    if judge_profile:
+        out["judge"] = {"full_name": judge_profile.full_name}
+    return out
 
 
 def _player_to_dict(
@@ -211,7 +214,9 @@ class GameService:
         await db.flush()
 
         await self._deal_cards(db, game_id, players)
-        round_data = _round_to_dict(rnd)
+        
+        judge_prof = await db.get(User, rnd.judge_user_id)
+        round_data = _round_to_dict(rnd, judge_prof)
         await ws_manager.send_to_game(game_id, "game_started", {"round": round_data})
         await ws_manager.send_to_game(game_id, "new_round", round_data)
         return round_data
@@ -220,7 +225,10 @@ class GameService:
         self, db: AsyncSession, game_id: str
     ) -> dict[str, Any] | None:
         r = await game_repository.get_last_round(db, game_id)
-        return _round_to_dict(r) if r else None
+        if not r:
+            return None
+        judge_prof = await db.get(User, r.judge_user_id)
+        return _round_to_dict(r, judge_prof)
 
     async def start_next_round(
         self, db: AsyncSession, user_id: str, game_id: str
@@ -252,7 +260,9 @@ class GameService:
             winning_answer_id=None,
         )
         await game_repository.add(db, nxt)
-        round_data = _round_to_dict(nxt)
+        
+        judge_prof = await db.get(User, nxt.judge_user_id)
+        round_data = _round_to_dict(nxt, judge_prof)
         await ws_manager.send_to_game(game_id, "new_round", round_data)
         return round_data
 
