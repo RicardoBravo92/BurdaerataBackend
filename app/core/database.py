@@ -18,7 +18,7 @@ elif database_url.startswith("postgresql://"):
 
 engine = create_async_engine(
     database_url,
-    echo=True,
+    echo=False,
     poolclass=NullPool,   # Neon serverless: fresh connection per request, no stale pool issues
 )
 

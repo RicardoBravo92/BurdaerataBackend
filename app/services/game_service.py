@@ -162,6 +162,7 @@ class GameService:
 
         gp = GamePlayer(id=str(uuid4()), game_id=game.id, user_id=user_id, score=0)
         await game_repository.add(db, gp)
+        await db.commit()
         result = _game_to_dict(game)
         await ws_manager.send_to_game(
             game.id, "player_joined", {"user_id": user_id, "game": result}
@@ -349,6 +350,11 @@ class GameService:
         if rnd.status == "finished":
             raise ValueError("This round is already finished")
 
+        players_count = await game_repository.count_players(db, rnd.game_id)
+        answers = list(await game_repository.list_answers(db, round_id))
+        if len(answers) < players_count - 1:
+            raise ValueError("Cannot select a winner until all players have submitted their answers")
+
         answer = await game_repository.get_answer(db, winning_answer_id)
         if not answer or answer.round_id != rnd.id:
             raise ValueError("Winning answer not found")
@@ -426,6 +432,7 @@ class GameService:
     ) -> dict[str, Any]:
         await game_repository.delete_player(db, game_id, user_id)
         await game_repository.delete_player_cards(db, game_id, user_id)
+        await db.commit()
         remaining = await game_repository.count_players(db, game_id)
         await ws_manager.send_to_game(
             game_id, "player_left", {"user_id": user_id, "remaining": remaining}
