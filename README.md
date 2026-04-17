@@ -103,15 +103,6 @@ uv run alembic downgrade -1
 docker-compose -f docker-compose.yml up -d
 ```
 
-### Render
-
-1. Create a new Web Service on Render
-2. Connect your GitHub repository
-3. Set environment variables
-4. Deploy
-
-Or use `render.yaml` for automatic setup.
-
 ## License
 
 MIT
