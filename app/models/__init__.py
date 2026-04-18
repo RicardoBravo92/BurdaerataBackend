@@ -4,6 +4,7 @@ from app.models.game_player import GamePlayer
 from app.models.player_card import PlayerCard
 from app.models.round import Round
 from app.models.round_answer import RoundAnswer
+from app.models.chat_message import ChatMessage
 
 __all__ = [
     "User",
@@ -12,4 +13,5 @@ __all__ = [
     "PlayerCard",
     "Round",
     "RoundAnswer",
+    "ChatMessage",
 ]
