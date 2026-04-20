@@ -1,7 +1,3 @@
-from datetime import datetime
-from typing import Optional
-
-from sqlalchemy import Column, DateTime
 from sqlmodel import Field, SQLModel
 
 
@@ -16,7 +12,3 @@ class GamePlayer(SQLModel, table=True):
         foreign_key="users.id", max_length=255, index=True, ondelete="CASCADE"
     )
     score: int = Field(default=0)
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True), nullable=True),
-    )

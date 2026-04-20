@@ -1,7 +1,4 @@
-from datetime import datetime
 from typing import Optional
-
-from sqlalchemy import Column, DateTime
 from sqlmodel import Field, SQLModel
 
 
@@ -17,7 +14,3 @@ class Game(SQLModel, table=True):
     max_players: int = Field(default=8)
     public: bool = Field(default=True)
     score_to_win: Optional[int] = Field(default=7)
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True), nullable=True),
-    )

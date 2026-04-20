@@ -1,7 +1,5 @@
-from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Column, DateTime
 from sqlmodel import Field, SQLModel
 
 
@@ -19,7 +17,4 @@ class Round(SQLModel, table=True):
     )
     status: str = Field(default="submitting", max_length=32)
     winning_answer_id: Optional[str] = Field(default=None, max_length=36)
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True), nullable=True),
-    )
+   
