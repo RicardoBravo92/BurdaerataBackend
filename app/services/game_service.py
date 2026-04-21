@@ -108,19 +108,23 @@ class GameService:
 
     async def get_game_by_id(
         self, db: AsyncSession, game_id: str
-    ) -> Game | None:
+    ) -> Game:
         game = await game_repository.get_game_by_id(db, game_id)
+        if not game:
+            raise ValueError("Game not found")
         return game
 
     async def get_game_by_code(
         self, db: AsyncSession, code: str
-    ) -> Game | None:
+    ) -> Game:
         game = await game_repository.get_game_by_code(db, code)
+        if not game:
+            raise ValueError("Game not found")
         return game
 
     async def join_game(
         self, db: AsyncSession, user_id: str, code_or_game_id: str
-    ) -> dict[str, Any]:
+    ) -> Game:
         await ensure_clerk_user(db, user_id)
         game = await game_repository.resolve_game(db, code_or_game_id)
         if not game:

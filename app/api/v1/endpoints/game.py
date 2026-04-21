@@ -7,6 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.dependencies import ClerkUserId
 from app.core.database import get_db
 from app.services.game_service import game_service
+from app.models.game import Game
+from app.models.round import Round
+from app.models.round_answer import RoundAnswer
 
 router = APIRouter()
 
@@ -41,7 +44,7 @@ async def create_game(
     body: CreateGameBody,
     user_id: ClerkUserId,
     db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
+) -> Game:
     try:
         return await game_service.create_game(
             db, user_id, body.max_players, body.score_to_win
@@ -53,7 +56,7 @@ async def create_game(
 @router.get("/by-code/{code}")
 async def get_game_by_code(
     code: str, _user_id: ClerkUserId, db: AsyncSession = Depends(get_db)
-) -> dict[str, Any]:
+) -> Game:
     game = await game_service.get_game_by_code(db, code)
     if not game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
@@ -63,7 +66,7 @@ async def get_game_by_code(
 @router.get("/{game_id}")
 async def get_game(
     game_id: str, _user_id: ClerkUserId, db: AsyncSession = Depends(get_db)
-) -> dict[str, Any]:
+) -> Game:
     game = await game_service.get_game_by_id(db, game_id)
     if not game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
@@ -75,7 +78,7 @@ async def join_game(
     body: JoinGameBody,
     user_id: ClerkUserId,
     db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
+) -> Game:
     try:
         return await game_service.join_game(db, user_id, body.code)
     except Exception as error:
@@ -94,7 +97,7 @@ async def start_game(
     game_id: str,
     user_id: ClerkUserId,
     db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
+) -> Round:
     try:
         return await game_service.start_game(db, user_id, game_id)
     except Exception as error:
@@ -104,7 +107,7 @@ async def start_game(
 @router.get("/{game_id}/rounds/last")
 async def get_last_round(
     game_id: str, _user_id: ClerkUserId, db: AsyncSession = Depends(get_db)
-) -> dict[str, Any]:
+) -> Round:
     last_round = await game_service.get_last_round(db, game_id)
     if not last_round:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No rounds found")
@@ -116,7 +119,7 @@ async def start_next_round(
     game_id: str,
     user_id: ClerkUserId,
     db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
+) -> Round:
     try:
         return await game_service.start_next_round(db, user_id, game_id)
     except Exception as error:
@@ -126,7 +129,7 @@ async def start_next_round(
 @router.get("/rounds/{round_id}/answers")
 async def get_round_answers(
     round_id: str, _user_id: ClerkUserId, db: AsyncSession = Depends(get_db)
-) -> list[dict[str, Any]]:
+) -> list[RoundAnswer]:
     return await game_service.get_round_answers(db, round_id)
 
 
@@ -136,7 +139,7 @@ async def create_round_answer(
     body: CreateRoundAnswerBody,
     user_id: ClerkUserId,
     db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
+) -> RoundAnswer:
     try:
         return await game_service.create_round_answer(
             db, round_id, user_id, body.cards_used
@@ -151,7 +154,7 @@ async def select_winner(
     body: SelectWinnerBody,
     user_id: ClerkUserId,
     db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
+) -> RoundAnswer:
     try:
         return await game_service.select_winner(
             db, user_id, round_id, body.winning_answer_id
