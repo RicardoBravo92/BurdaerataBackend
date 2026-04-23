@@ -103,7 +103,7 @@ class GameService:
         await game_repository.add(db, game)
         gp = GamePlayer(id=str(uuid4()), game_id=gid, user_id=user_id, score=0)
         await game_repository.add(db, gp)
-        await ws_manager.send_to_game(gid, "game_created", game)
+        await ws_manager.send_to_game(gid, "game_created", game.model_dump())
         return game
 
     async def get_game_by_id(
@@ -141,7 +141,7 @@ class GameService:
         await game_repository.add(db, gp)
         await db.commit()
         await ws_manager.send_to_game(
-            game.id, "player_joined", {"user_id": user_id, "game": game}
+            game.id, "player_joined", {"user_id": user_id, "game": game.model_dump()}
         )
         return game
 
@@ -193,8 +193,8 @@ class GameService:
         await self._deal_cards(db, game_id, players)
         await db.commit()
         
-        await ws_manager.send_to_game(game_id, "game_started", {"round": round})
-        await ws_manager.send_to_game(game_id, "new_round", round)
+        await ws_manager.send_to_game(game_id, "game_started", {"round": round.model_dump()})
+        await ws_manager.send_to_game(game_id, "new_round", round.model_dump())
         return round
 
     async def get_last_round(
@@ -240,7 +240,7 @@ class GameService:
         await game_repository.add(db, next_round)
         await db.commit()
         
-        await ws_manager.send_to_game(game_id, "new_round", next_round)
+        await ws_manager.send_to_game(game_id, "new_round", next_round.model_dump())
         return next_round
 
     async def create_round_answer(
