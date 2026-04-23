@@ -44,7 +44,7 @@ def _answer_to_dict(a: RoundAnswer, profile: User | None) -> dict[str, Any]:
         "final_text": a.final_text or "",
         "is_winner": bool(a.is_winner),
     }
-    if a.created_at:
+    if getattr(a, "created_at", None):
         out["created_at"] = a.created_at.isoformat()
     if profile:
         out["user"] = {"full_name": profile.full_name}
