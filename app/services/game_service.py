@@ -401,10 +401,21 @@ class GameService:
     async def leave_game(
         self, db: AsyncSession, user_id: str, game_id: str
     ) -> dict[str, Any]:
+        last_round = await game_repository.get_last_round(db, game_id)
+        
         await game_repository.delete_player(db, game_id, user_id)
         await game_repository.delete_player_cards(db, game_id, user_id)
         await db.commit()
         remaining = await game_repository.count_players(db, game_id)
+        
+        if remaining > 0 and last_round and last_round.status != "finished" and last_round.judge_user_id == user_id:
+            players = list(await game_repository.list_players(db, game_id))
+            if players:
+                judge_idx = (last_round.round_number - 1) % len(players)
+                last_round.judge_user_id = players[judge_idx].user_id
+                db.add(last_round)
+                await db.commit()
+                
         await ws_manager.send_to_game(
             game_id, "player_left", {"user_id": user_id, "remaining": remaining}
         )
