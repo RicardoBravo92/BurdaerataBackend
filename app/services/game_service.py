@@ -335,7 +335,6 @@ class GameService:
         round.status = "finished"
         db.add(answer)
         db.add(round)
-        await db.flush()
 
         gplayer = await game_repository.get_player_row(db, round.game_id, answer.user_id)
         if not gplayer:
@@ -343,8 +342,7 @@ class GameService:
 
         gplayer.score = (gplayer.score or 0) + 1
         db.add(gplayer)
-        await db.flush()
-        
+
         await db.commit()
 
         game = await game_repository.get_game_by_id(db, round.game_id)
@@ -355,7 +353,7 @@ class GameService:
         ):
             game.status = "finished"
             db.add(game)
-            await db.flush()
+
             await ws_manager.send_to_game(
                 game.id,
                 "game_finished",
@@ -380,7 +378,6 @@ class GameService:
     ) -> dict[str, Any]:
         row = await game_repository.get_player_cards_row(db, game_id, user_id)
         cards = list(row.cards) if row and row.cards else []
-        print(f"[DEBUG] Fetching cards for user {user_id} in game {game_id}: {cards}")
         return {"game_id": game_id, "user_id": user_id, "cards": cards}
 
     async def update_player_cards(
@@ -395,7 +392,6 @@ class GameService:
             row = PlayerCard(user_id=user_id, game_id=game_id, cards=clean)
             db.add(row)
         await db.flush()
-        await db.refresh(row)
         return {"game_id": game_id, "user_id": user_id, "cards": clean}
 
     async def leave_game(

@@ -24,22 +24,20 @@ class CardService:
     def __init__(self):
         self._questions: list[QuestionCard] = []
         self._answers: list[AnswerCard] = []
+        self._questions_by_id: dict[str, QuestionCard] = {}
+        self._answers_by_id: dict[str, AnswerCard] = {}
         self._load()
 
     def _load(self):
         self._questions, self._answers = _load_cards()
+        self._questions_by_id = {q.id: q for q in self._questions}
+        self._answers_by_id = {a.id: a for a in self._answers}
 
     def get_question_by_id(self, card_id: str) -> QuestionCard | None:
-        for q in self._questions:
-            if q.id == card_id:
-                return q
-        return None
+        return self._questions_by_id.get(card_id)
 
     def get_answer_by_id(self, card_id: str) -> AnswerCard | None:
-        for a in self._answers:
-            if a.id == card_id:
-                return a
-        return None
+        return self._answers_by_id.get(card_id)
 
     def list_questions(self) -> list[QuestionCardListItem]:
         return [
