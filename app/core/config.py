@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     CLERK_SECRET_KEY: str = ""
     AUTHORIZED_PARTIES: str = ""
 
+    RESEND_API_KEY: str = ""
+
 
 @lru_cache()
 def get_settings() -> Settings:
