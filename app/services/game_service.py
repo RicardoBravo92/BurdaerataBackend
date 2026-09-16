@@ -108,19 +108,13 @@ class GameService:
 
     async def get_game_by_id(
         self, db: AsyncSession, game_id: str
-    ) -> Game:
-        game = await game_repository.get_game_by_id(db, game_id)
-        if not game:
-            raise ValueError("Game not found")
-        return game
+    ) -> Game | None:
+        return await game_repository.get_game_by_id(db, game_id)
 
     async def get_game_by_code(
         self, db: AsyncSession, code: str
-    ) -> Game:
-        game = await game_repository.get_game_by_code(db, code)
-        if not game:
-            raise ValueError("Game not found")
-        return game
+    ) -> Game | None:
+        return await game_repository.get_game_by_code(db, code)
 
     async def join_game(
         self, db: AsyncSession, user_id: str, code_or_game_id: str
@@ -371,7 +365,8 @@ class GameService:
                 "winning_answer_id": winning_answer_id,
             },
         )
-        return {"success": True}
+        winner_profile = await db.get(User, answer.user_id)
+        return _answer_to_dict(answer, winner_profile)
 
     async def get_player_cards(
         self, db: AsyncSession, game_id: str, user_id: str
