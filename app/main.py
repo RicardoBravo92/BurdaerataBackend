@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
+from app.core.config import get_settings
 from app.core.database import engine, init_db
 
 
@@ -14,11 +15,17 @@ async def lifespan(_app: FastAPI):
     await engine.dispose()
 
 
+def _allowed_origins() -> list[str]:
+    raw = get_settings().AUTHORIZED_PARTIES
+    origins = [origin.strip() for origin in raw.split(",") if origin.strip()]
+    return origins or ["http://localhost:3000"]
+
+
 app = FastAPI(title="API Burdaerata", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

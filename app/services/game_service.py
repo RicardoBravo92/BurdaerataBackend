@@ -124,6 +124,9 @@ class GameService:
         if not game:
             raise ValueError("Game not found")
 
+        if game.status != "waiting":
+            raise ValueError("Game has already started")
+
         if await game_repository.get_player_row(db, game.id, user_id):
             raise ValueError("You are already in this game")
 
@@ -167,6 +170,8 @@ class GameService:
             raise ValueError("Need at least 2 players to start the game")
         if not any(p.user_id == user_id for p in players):
             raise ValueError("You are not in this game")
+        if game.host_player_id != user_id:
+            raise ValueError("Only the host can start the game")
 
         first_judge = players[0].user_id
         question = card_service.get_random_question()
@@ -211,6 +216,8 @@ class GameService:
         players = list(await game_repository.list_players(db, game_id))
         if not any(p.user_id == user_id for p in players):
             raise ValueError("You are not in this game")
+        if game.host_player_id != user_id:
+            raise ValueError("Only the host can start the next round")
 
         last = await game_repository.get_last_round(db, game_id)
         if not last:
@@ -243,14 +250,25 @@ class GameService:
         round = await game_repository.get_round(db, round_id)
         if not round:
             raise ValueError("Round not found")
+        if round.status != "submitting":
+            raise ValueError("This round is no longer accepting answers")
         if round.judge_user_id == user_id:
             raise ValueError("Judge cannot submit answers")
-        
+
         existing = await game_repository.get_answer_by_user(db, round_id, user_id)
         if existing:
             raise ValueError("You have already submitted an answer for this round")
 
         clean = [c for c in cards_used if c]
+        if not clean:
+            raise ValueError("You must submit at least one card")
+
+        row = await game_repository.get_player_cards_row(db, round.game_id, user_id)
+        current = list(row.cards or []) if row else []
+        for card_id in clean:
+            if card_id not in current:
+                raise ValueError("You do not have one of the submitted cards")
+
         ans = RoundAnswer(
             id=str(uuid4()),
             round_id=round_id,
@@ -261,30 +279,26 @@ class GameService:
         )
         await game_repository.add(db, ans)
 
-        row = await game_repository.get_player_cards_row(db, round.game_id, user_id)
+        for card_id in clean:
+            current.remove(card_id)
+
+        used_ids = set(current)
+        new_cards: list[str] = []
+        attempts = 0
+        while len(new_cards) < len(clean) and attempts < card_service.answer_count:
+            attempts += 1
+            card = card_service.get_random_answer()
+            if card.id not in used_ids:
+                new_cards.append(card.id)
+                used_ids.add(card.id)
+
+        current.extend(new_cards)
         if row:
-            current = list(row.cards or [])
-            for c in clean:
-                if c in current:
-                    current.remove(c)
-            avail = [
-                card_service.get_answer_by_id(aid).id
-                for aid in current
-                if card_service.get_answer_by_id(aid)
-            ]
-            used_ids = set(current)
-            new_cards = []
-            for _ in range(len(clean)):
-                card = card_service.get_random_answer()
-                if card.id not in used_ids:
-                    new_cards.append(card.id)
-                    used_ids.add(card.id)
-                if len(new_cards) >= len(clean):
-                    break
-            current.extend(new_cards)
             row.cards = current
             db.add(row)
-            await db.flush()
+        else:
+            db.add(PlayerCard(user_id=user_id, game_id=round.game_id, cards=current))
+        await db.flush()
 
         await db.commit()
         prof = await db.get(User, user_id)
@@ -323,6 +337,8 @@ class GameService:
         answer = await game_repository.get_answer(db, winning_answer_id)
         if not answer or answer.round_id != round.id:
             raise ValueError("Winning answer not found")
+        if answer.user_id == round.judge_user_id:
+            raise ValueError("The judge cannot win their own round")
 
         answer.is_winner = True
         round.winning_answer_id = winning_answer_id
@@ -393,20 +409,39 @@ class GameService:
         self, db: AsyncSession, user_id: str, game_id: str
     ) -> dict[str, Any]:
         last_round = await game_repository.get_last_round(db, game_id)
-        
+
         await game_repository.delete_player(db, game_id, user_id)
         await game_repository.delete_player_cards(db, game_id, user_id)
         await db.commit()
-        remaining = await game_repository.count_players(db, game_id)
-        
-        if remaining > 0 and last_round and last_round.status != "finished" and last_round.judge_user_id == user_id:
-            players = list(await game_repository.list_players(db, game_id))
-            if players:
-                judge_idx = (last_round.round_number - 1) % len(players)
-                last_round.judge_user_id = players[judge_idx].user_id
-                db.add(last_round)
-                await db.commit()
-                
+
+        game = await game_repository.get_game_by_id(db, game_id)
+        players = list(await game_repository.list_players(db, game_id))
+        remaining = len(players)
+
+        # Hand over hosting so the game can continue (the host drives next rounds).
+        if game and game.host_player_id == user_id and players:
+            game.host_player_id = players[0].user_id
+            db.add(game)
+
+        # Reassign the judge if they left mid-round, preferring players who
+        # have not submitted an answer yet (so the new judge can't self-vote).
+        if (
+            last_round
+            and last_round.status != "finished"
+            and last_round.judge_user_id == user_id
+            and players
+        ):
+            answered = {
+                a.user_id
+                for a in await game_repository.list_answers(db, last_round.id)
+            }
+            candidates = [p for p in players if p.user_id not in answered] or players
+            last_round.judge_user_id = candidates[0].user_id
+            db.add(last_round)
+
+        if game or last_round:
+            await db.commit()
+
         await ws_manager.send_to_game(
             game_id, "player_left", {"user_id": user_id, "remaining": remaining}
         )

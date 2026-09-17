@@ -35,6 +35,14 @@ def _start_two_player_game(client, auth_headers, other_auth_headers, **kwargs):
     return game_id, start_response.json()
 
 
+def _get_hand(client, game_id, headers):
+    response = client.get(
+        f"/api/v1/games/{game_id}/players/me/cards", headers=headers
+    )
+    assert response.status_code == 200
+    return response.json()["cards"]
+
+
 class TestHealth:
     """Test health check endpoint."""
 
@@ -216,6 +224,27 @@ class TestGamePlayers:
         )
         assert response.status_code == 200
 
+    def test_leave_game_reassigns_host(
+        self, client, auth_headers, other_auth_headers
+    ):
+        """Test that hosting is handed over when the host leaves."""
+        game_id, _ = _create_two_player_game(
+            client, auth_headers, other_auth_headers, max_players=4, score_to_win=5
+        )
+
+        leave_response = client.post(
+            f"/api/v1/games/{game_id}/leave",
+            headers=auth_headers,
+        )
+        assert leave_response.status_code == 200
+
+        game_response = client.get(
+            f"/api/v1/games/{game_id}",
+            headers=other_auth_headers,
+        )
+        assert game_response.status_code == 200
+        assert game_response.json()["host_player_id"] != TEST_USER_ID
+
 
 class TestRounds:
     """Test round-related endpoints."""
@@ -233,6 +262,17 @@ class TestRounds:
         assert round_data["round_number"] == 1
         assert "question_card_id" in round_data
         assert round_data["status"] == "submitting"
+
+    def test_start_game_host_only(self, client, auth_headers, other_auth_headers):
+        """Test that only the host can start the game."""
+        game_id, _ = _create_two_player_game(
+            client, auth_headers, other_auth_headers, max_players=4, score_to_win=5
+        )
+        response = client.post(
+            f"/api/v1/games/{game_id}/start",
+            headers=other_auth_headers,
+        )
+        assert response.status_code == 400
 
     def test_start_game_needs_two_players(self, client, auth_headers):
         """Test that a single player cannot start a game."""
@@ -289,7 +329,35 @@ class TestRoundAnswers:
 
     def test_submit_answer(self, client, auth_headers, other_auth_headers):
         """Test submitting an answer to a round as a non-judge player."""
-        _, round_data = _start_two_player_game(
+        game_id, round_data = _start_two_player_game(
+            client,
+            auth_headers,
+            other_auth_headers,
+            max_players=4,
+            score_to_win=5,
+        )
+        round_id = round_data["id"]
+        judge_user_id = round_data["judge_user_id"]
+        submitter_headers = (
+            other_auth_headers if judge_user_id == TEST_USER_ID else auth_headers
+        )
+        hand = _get_hand(client, game_id, submitter_headers)
+        cards_used = hand[:2]
+
+        response = client.post(
+            f"/api/v1/games/rounds/{round_id}/answers",
+            json={"cards_used": cards_used},
+            headers=submitter_headers,
+        )
+        assert response.status_code == 201
+        data = response.json()
+        assert data["cards_used"] == cards_used
+
+    def test_submit_answer_rejects_foreign_cards(
+        self, client, auth_headers, other_auth_headers
+    ):
+        """Test that a player cannot submit cards they do not hold."""
+        game_id, round_data = _start_two_player_game(
             client,
             auth_headers,
             other_auth_headers,
@@ -304,12 +372,10 @@ class TestRoundAnswers:
 
         response = client.post(
             f"/api/v1/games/rounds/{round_id}/answers",
-            json={"cards_used": ["card1", "card2"]},
+            json={"cards_used": ["not-a-real-card"]},
             headers=submitter_headers,
         )
-        assert response.status_code == 201
-        data = response.json()
-        assert data["cards_used"] == ["card1", "card2"]
+        assert response.status_code == 400
 
     def test_judge_cannot_submit_answer(
         self, client, auth_headers, other_auth_headers
@@ -337,7 +403,7 @@ class TestRoundAnswers:
 
     def test_get_round_answers(self, client, auth_headers, other_auth_headers):
         """Test getting answers for a round."""
-        _, round_data = _start_two_player_game(
+        game_id, round_data = _start_two_player_game(
             client,
             auth_headers,
             other_auth_headers,
@@ -349,10 +415,11 @@ class TestRoundAnswers:
         submitter_headers = (
             other_auth_headers if judge_user_id == TEST_USER_ID else auth_headers
         )
+        hand = _get_hand(client, game_id, submitter_headers)
 
         client.post(
             f"/api/v1/games/rounds/{round_id}/answers",
-            json={"cards_used": ["card1"]},
+            json={"cards_used": hand[:1]},
             headers=submitter_headers,
         )
 
@@ -367,7 +434,7 @@ class TestRoundAnswers:
 
     def test_select_winner(self, client, auth_headers, other_auth_headers):
         """Test selecting a winner for a round."""
-        _, round_data = _start_two_player_game(
+        game_id, round_data = _start_two_player_game(
             client,
             auth_headers,
             other_auth_headers,
@@ -382,10 +449,11 @@ class TestRoundAnswers:
         submitter_headers = (
             other_auth_headers if judge_user_id == TEST_USER_ID else auth_headers
         )
+        hand = _get_hand(client, game_id, submitter_headers)
 
         answer_response = client.post(
             f"/api/v1/games/rounds/{round_id}/answers",
-            json={"cards_used": ["card1"]},
+            json={"cards_used": hand[:1]},
             headers=submitter_headers,
         )
         assert answer_response.status_code == 201
