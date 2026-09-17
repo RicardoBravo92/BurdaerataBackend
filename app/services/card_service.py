@@ -3,10 +3,10 @@ from pathlib import Path
 from random import choice
 
 from app.schemas.card import (
-    QuestionCard,
     AnswerCard,
-    QuestionCardListItem,
     AnswerCardListItem,
+    QuestionCard,
+    QuestionCardListItem,
 )
 
 
@@ -66,6 +66,20 @@ class CardService:
     def get_answer_text(self, card_id: str) -> str | None:
         a = self.get_answer_by_id(card_id)
         return a.text if a else None
+
+    def compose_answer_text(
+        self, question_id: str, answer_ids: list[str]
+    ) -> str:
+        """Compose a question's blanks with the given answer card texts."""
+        question = self.get_question_by_id(question_id)
+        if not question:
+            return ""
+        answers = [self.get_answer_by_id(aid) for aid in answer_ids if aid]
+        texts = [a.text for a in answers if a]
+        composed = question.text
+        for text in texts:
+            composed = composed.replace("_____", text, 1)
+        return composed
 
     @property
     def question_count(self) -> int:

@@ -7,6 +7,7 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.ws_manager import ws_manager
 from app.models.game import Game
 from app.models.game_player import GamePlayer
 from app.models.player_card import PlayerCard
@@ -15,9 +16,7 @@ from app.models.round_answer import RoundAnswer
 from app.models.user import User
 from app.repositories.game_repository import game_repository
 from app.repositories.user_repository import ensure_clerk_user
-from app.core.ws_manager import ws_manager
 from app.services.card_service import card_service
-
 
 
 def _player_to_dict(
@@ -274,7 +273,9 @@ class GameService:
             round_id=round_id,
             user_id=user_id,
             cards_used=clean,
-            final_text="",
+            final_text=card_service.compose_answer_text(
+                round.question_card_id, clean
+            ),
             is_winner=False,
         )
         await game_repository.add(db, ans)
@@ -445,7 +446,9 @@ class GameService:
         await ws_manager.send_to_game(
             game_id, "player_left", {"user_id": user_id, "remaining": remaining}
         )
-        if remaining == 0:
+        # Only drop empty lobbies that never started. Played/finished games are
+        # kept for history, stats, and rematch.
+        if remaining == 0 and game and game.status == "waiting":
             await game_repository.delete_game_cascade(db, game_id)
             await ws_manager.send_to_game(game_id, "game_deleted", {"game_id": game_id})
         return {"success": True}
