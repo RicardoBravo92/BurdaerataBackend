@@ -1,44 +1,48 @@
 # Burdaerata Backend
 
-FastAPI backend for Burdaerata - a Cards Against Humanity style party game.
+FastAPI backend for **Burdaerata** — a Cards Against Humanity style party game played in real time with friends. Venezuelan flavor, played over WebSockets.
 
-👉 **Frontend Repository:** [https://github.com/RicardoBravo92/Burdaerata](https://github.com/RicardoBravo92/Burdaerata)
+- 👉 **Web App:** [github.com/RicardoBravo92/Burdaerata](https://github.com/RicardoBravo92/Burdaerata)
+- 👉 **Mobile App:** [github.com/RicardoBravo92/Burdaerataexpo](https://github.com/RicardoBravo92/Burdaerataexpo)
 
 ## Tech Stack
 
-- **FastAPI** - Modern async Python web framework
-- **SQLAlchemy/SQLModel** - ORM with async support
-- **PostgreSQL** - Production database
-- **SQLite** - Development database
-- **Clerk** - Authentication
-- **WebSockets** - Real-time game updates
-- **Docker** - Containerization
-- **Alembic** - Database migrations
+- **FastAPI** — async Python web framework
+- **SQLAlchemy / SQLModel** — async ORM
+- **PostgreSQL (Neon, prod) / SQLite (dev)** — database
+- **Clerk** — JWT authentication
+- **WebSockets** — real-time game state
+- **Alembic** — database migrations
+- **Resend** — transactional email
 
 ## Features
 
-- Game lobby system with unique join codes
-- Real-time WebSocket notifications
-- Card dealing and management
-- Round-based gameplay
-- Score tracking
-- JWT authentication via Clerk
+- Game lobby with unique 6-digit join codes
+- Real-time WebSocket updates (players, rounds, answers, chat)
+- Round-based gameplay: question card → submit answers → judge picks a winner
+- Automatic card dealing and refill after each submission
+- Score tracking with configurable score-to-win
+- Clerk JWT auth on REST and WebSocket (only players may open a socket)
+- Winner selection, round transitions, and game history
+- Chat (persisted) broadcast over WebSocket
+- Password recovery + registration emails via Resend
 
 ## Project Structure
 
 ```
 Backend/
 ├── app/
-│   ├── api/v1/endpoints/   # API routes
-│   ├── core/               # Config, database, WebSocket manager
+│   ├── api/v1/endpoints/   # REST + WebSocket routes
+│   ├── core/               # config, async database, WebSocket manager
 │   ├── models/             # SQLModel models
 │   ├── repositories/       # Data access layer
 │   ├── schemas/            # Pydantic schemas
-│   ├── services/           # Business logic
+│   ├── services/           # Business logic (game, cards, email)
 │   └── main.py             # FastAPI app
-├── alembic/               # Database migrations
-├── cards_data.json         # Game cards data
-└── docker-compose.yml      # Docker setup
+├── alembic/                # Database migrations (async env)
+├── tests/                  # pytest suite
+├── cards_data.json         # Question + answer cards
+└── render.yaml             # Render.com deployment
 ```
 
 ## Setup
@@ -46,62 +50,74 @@ Backend/
 ### Prerequisites
 
 - Python 3.12+
-- PostgreSQL (or Docker)
-- Clerk account for authentication
+- PostgreSQL for production (SQLite is fine for local dev)
+- A [Clerk](https://clerk.com) account for authentication
+- (Optional) A [Resend](https://resend.com) API key for email features
 
 ### Local Development
 
-1. Clone and install dependencies:
 ```bash
 cd Backend
 cp .env.example .env
-# Edit .env with your CLERK_SECRET_KEY
+# Edit .env with your CLERK_SECRET_KEY and DATABASE_URL
 uv sync
+uvicorn app.main:app --reload --port 8000
 ```
 
-2. Run the server:
-```bash
-uv run uvicorn app.main:app --reload --port 8000
-```
+Database migrations run automatically on startup (`init_db` applies `alembic upgrade head`), so no manual step is needed to boot.
 
-3. Access the API:
-- API: http://localhost:8000/api/v1
-- Docs: http://localhost:8000/docs
+### API endpoints
 
-### Docker
+- REST API: `http://localhost:8000/api/v1`
+- OpenAPI docs: `http://localhost:8000/docs`
+
+### Running tests
 
 ```bash
-docker-compose up --build
+uv run pytest
+# or, if uv run fails on this machine:
+.venv\Scripts\python.exe -m pytest
 ```
 
 ## Environment Variables
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | Production |
-| `CLERK_SECRET_KEY` | Clerk API secret key | Yes |
-| `AUTHORIZED_PARTIES` | Allowed frontend origins | Yes |
+| `DATABASE_URL` | SQLAlchemy async URL (`sqlite+aiosqlite:///...` for dev, `postgresql+asyncpg://...` for prod) | Yes |
+| `CLERK_SECRET_KEY` | Clerk secret key used to verify JWTs | Yes |
+| `AUTHORIZED_PARTIES` | Comma-separated allowed frontend origins | No |
+| `RESEND_API_KEY` | Resend key for transactional email | For email endpoints |
 
 ## Database Migrations
 
 ```bash
-# Create new migration
+# Generate a new migration after model changes
 uv run alembic revision --autogenerate -m "add description"
 
-# Apply migrations
+# Apply migrations manually (also done automatically at startup)
 uv run alembic upgrade head
 
-# Rollback
+# Rollback one step
 uv run alembic downgrade -1
 ```
 
-## Deployment
+Migrations are generated in `alembic/versions/`. The initial migration includes a baseline guard so databases previously created via `create_all` are stamped without error.
 
-### Docker
+## Real-Time / WebSockets
 
-```bash
-docker-compose -f docker-compose.yml up -d
-```
+- Endpoint: `/api/v1/ws/{game_id}?token=<clerk_jwt>`
+- Auth: the Clerk JWT is verified before the socket is accepted; only members of the game may connect.
+- Events: `game_started`, `new_round`, `answer_submitted`, `round_finished`, `game_finished`, `player_joined`, `player_left`, `game_deleted`, `new_chat_message`.
+
+## Deployment (Render.com)
+
+`render.yaml` describes the free-tier web service and database:
+
+- **Build:** `uv sync --frozen && uv run alembic upgrade head`
+- **Start:** `uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- **Health check:** `/health`
+
+Set `CLERK_SECRET_KEY`, `RESEND_API_KEY`, and `AUTHORIZED_PARTIES` in the Render dashboard.
 
 ## License
 
