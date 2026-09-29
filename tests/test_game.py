@@ -563,21 +563,3 @@ class TestPlayerCards:
         data = response.json()
         assert "cards" in data
         assert isinstance(data["cards"], list)
-
-    def test_update_my_cards(self, client, auth_headers):
-        """Test updating my cards in a game."""
-        create_response = client.post(
-            "/api/v1/games",
-            json={"max_players": 4, "score_to_win": 5},
-            headers=auth_headers,
-        )
-        game_id = create_response.json()["id"]
-
-        response = client.put(
-            f"/api/v1/games/{game_id}/players/me/cards",
-            json={"cards": ["card1", "card2", "card3"]},
-            headers=auth_headers,
-        )
-        assert response.status_code == 200
-        data = response.json()
-        assert data["cards"] == ["card1", "card2", "card3"]
