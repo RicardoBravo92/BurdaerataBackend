@@ -23,10 +23,6 @@ class JoinGameBody(BaseModel):
     code: str
 
 
-class CardsBody(BaseModel):
-    cards: list[str]
-
-
 class CreateRoundAnswerBody(BaseModel):
     cards_used: list[str]
 
@@ -170,16 +166,6 @@ async def get_my_cards(
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     return await game_service.get_player_cards(db, game_id, user_id)
-
-
-@router.put("/{game_id}/players/me/cards")
-async def update_my_cards(
-    game_id: str,
-    body: CardsBody,
-    user_id: ClerkUserId,
-    db: AsyncSession = Depends(get_db),
-) -> dict[str, Any]:
-    return await game_service.update_player_cards(db, game_id, user_id, body.cards)
 
 
 @router.post("/{game_id}/leave")

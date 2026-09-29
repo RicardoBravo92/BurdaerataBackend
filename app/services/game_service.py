@@ -294,11 +294,8 @@ class GameService:
                 used_ids.add(card.id)
 
         current.extend(new_cards)
-        if row:
-            row.cards = current
-            db.add(row)
-        else:
-            db.add(PlayerCard(user_id=user_id, game_id=round.game_id, cards=current))
+        row.cards = current
+        db.add(row)
         await db.flush()
 
         await db.commit()
@@ -391,20 +388,6 @@ class GameService:
         row = await game_repository.get_player_cards_row(db, game_id, user_id)
         cards = list(row.cards) if row and row.cards else []
         return {"game_id": game_id, "user_id": user_id, "cards": cards}
-
-    async def update_player_cards(
-        self, db: AsyncSession, game_id: str, user_id: str, cards: list[str]
-    ) -> dict[str, Any]:
-        clean = [c for c in cards if c]
-        row = await game_repository.get_player_cards_row(db, game_id, user_id)
-        if row:
-            row.cards = clean
-            db.add(row)
-        else:
-            row = PlayerCard(user_id=user_id, game_id=game_id, cards=clean)
-            db.add(row)
-        await db.flush()
-        return {"game_id": game_id, "user_id": user_id, "cards": clean}
 
     async def leave_game(
         self, db: AsyncSession, user_id: str, game_id: str
