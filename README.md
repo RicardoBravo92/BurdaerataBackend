@@ -61,7 +61,7 @@ cd Backend
 cp .env.example .env
 # Edit .env with your CLERK_SECRET_KEY and DATABASE_URL
 uv sync
-uvicorn app.main:app --reload --port 8000
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 Database migrations run automatically on startup (`init_db` applies `alembic upgrade head`), so no manual step is needed to boot.
