@@ -61,7 +61,9 @@ cd Backend
 cp .env.example .env
 # Edit .env with your CLERK_SECRET_KEY and DATABASE_URL
 uv sync
-uv run uvicorn app.main:app --reload --port 8000
+# NOTE: usa `python -m uvicorn` (no `uvicorn`) porque uv falla con
+# "trampoline failed to canonicalize script path" en rutas con espacios.
+uv run python -m uvicorn app.main:app --reload --port 8000
 ```
 
 Database migrations run automatically on startup (`init_db` applies `alembic upgrade head`), so no manual step is needed to boot.
@@ -74,7 +76,7 @@ Database migrations run automatically on startup (`init_db` applies `alembic upg
 ### Running tests
 
 ```bash
-uv run pytest
+uv run python -m pytest
 # or, if uv run fails on this machine:
 .venv\Scripts\python.exe -m pytest
 ```

@@ -1,7 +1,7 @@
 .PHONY: dev up down build logs ps
 
 dev:
-	uv run uvicorn app.main:app --reload --port 8000
+	uv run python -m uvicorn app.main:app --reload --port 8000
 
 up:
 	docker-compose up -d
@@ -19,13 +19,13 @@ ps:
 	docker-compose ps
 
 migrate:
-	uv run alembic upgrade head
+	uv run python -m alembic upgrade head
 
 migrate-create:
-	uv run alembic revision --autogenerate -m "$(MSG)"
+	uv run python -m alembic revision --autogenerate -m "$(MSG)"
 
 migrate-rollback:
-	uv run alembic downgrade -1
+	uv run python -m alembic downgrade -1
 
 shell:
 	docker-compose exec backend sh
