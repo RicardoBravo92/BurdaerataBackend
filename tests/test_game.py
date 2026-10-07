@@ -415,7 +415,12 @@ class TestRoundAnswers:
             other_auth_headers if judge_user_id == TEST_USER_ID else auth_headers
         )
         hand = _get_hand(client, game_id, submitter_headers)
-        cards_used = hand[:1]
+        # Fill every blank of the drawn question (questions have 1-3 blanks)
+        # so the composed final_text never keeps a leftover placeholder.
+        question = client.get(
+            f"/api/v1/cards/questions/{round_data['question_card_id']}"
+        ).json()
+        cards_used = hand[: question["blank_count"]]
 
         response = client.post(
             f"/api/v1/games/rounds/{round_id}/answers",
