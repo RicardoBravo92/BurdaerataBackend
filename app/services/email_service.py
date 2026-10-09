@@ -1,7 +1,7 @@
 import resend
-from app.core.config import get_settings
+from app.core.config import settings
 
-resend.api_key = get_settings().RESEND_API_KEY
+resend.api_key = settings.resend_api_key
 
 
 class EmailService:

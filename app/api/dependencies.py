@@ -1,14 +1,16 @@
 from typing import Annotated, Optional
-
 from fastapi import Depends, HTTPException, Request, status
 from clerk_backend_api.security import authenticate_request_async
 from clerk_backend_api.security.types import AuthenticateRequestOptions
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import get_settings
+from app.core.config import settings
+from app.core.database import get_db
+from app.models.user import User
 
 
 def _authorized_parties() -> Optional[list[str]]:
-    raw = get_settings().AUTHORIZED_PARTIES.strip()
+    raw = settings.AUTHORIZED_PARTIES
     if not raw:
         return None
     parties = [p.strip() for p in raw.split(",") if p.strip()]
@@ -16,7 +18,6 @@ def _authorized_parties() -> Optional[list[str]]:
 
 
 async def get_clerk_user_id(request: Request) -> str:
-    settings = get_settings()
     if not settings.CLERK_SECRET_KEY:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -45,4 +46,28 @@ async def get_clerk_user_id(request: Request) -> str:
     return user_id
 
 
-ClerkUserId = Annotated[str, Depends(get_clerk_user_id)]
+async def get_current_user(
+    user_id: Annotated[str, Depends(get_clerk_user_id)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> User:
+    user = await db.get(User, user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> User:
+    # Add any active user checks here if needed
+    return current_user
+
+
+# Typed dependency aliases for clean router signatures
+DbDep = Annotated[AsyncSession, Depends(get_db)]
+ClerkUserIdDep = Annotated[str, Depends(get_clerk_user_id)]
+CurrentUserDep = Annotated[User, Depends(get_current_user)]
+ActiveUserDep = Annotated[User, Depends(get_current_active_user)]

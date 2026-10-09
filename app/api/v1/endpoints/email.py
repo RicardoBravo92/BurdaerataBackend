@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.core.database import get_db
+from app.api.dependencies import DbDep
 from app.models.user import User
 from app.schemas.email import (
     PasswordRecoveryRequest,
@@ -22,7 +22,7 @@ router = APIRouter()
 )
 async def request_password_recovery(
     body: PasswordRecoveryRequest,
-    db: AsyncSession = Depends(get_db),
+    db: DbDep,
 ) -> PasswordRecoveryResponse:
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
@@ -59,7 +59,7 @@ async def request_password_recovery(
 )
 async def send_registration_email(
     body: RegistrationEmailRequest,
-    db: AsyncSession = Depends(get_db),
+    db: DbDep,
 ) -> RegistrationEmailResponse:
     try:
         await email_service.send_registration_success(

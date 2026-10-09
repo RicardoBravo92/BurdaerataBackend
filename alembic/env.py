@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from sqlmodel import SQLModel
 
-from app.core.config import get_settings
+from app.core.config import settings
 from app.models import *  # noqa: F401,F403
 
 config = context.config
@@ -17,8 +17,7 @@ if config.config_file_name is not None:
 
 target_metadata = SQLModel.metadata
 
-settings = get_settings()
-database_url = settings.DATABASE_URL
+database_url = settings.database_url
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql+asyncpg://", 1)
 elif database_url.startswith("postgresql://"):

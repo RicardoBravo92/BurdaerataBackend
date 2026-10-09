@@ -1,17 +1,23 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
-class ProfileCreate(BaseModel):
-    user_id: int
-    full_name: str
-    avatar_url: str
+
+class ProfileBase(BaseModel):
+    full_name: str = Field(max_length=255)
+    first_name: str = Field(default="", max_length=255)
+    last_name: str = Field(default="", max_length=255)
+    email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = Field(default=None, max_length=2048)
+
 
 class ProfileUpdate(BaseModel):
-    user_id: int
-    full_name: str
-    avatar_url: str
+    full_name: Optional[str] = Field(default=None, max_length=255)
+    first_name: Optional[str] = Field(default=None, max_length=255)
+    last_name: Optional[str] = Field(default=None, max_length=255)
+    email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = Field(default=None, max_length=2048)
 
-class ProfileResponse(BaseModel):
-    id: int
-    user_id: int
-    full_name: str
-    avatar_url: str 
+
+class ProfileRead(ProfileBase):
+    id: str
+
+    model_config = ConfigDict(from_attributes=True)

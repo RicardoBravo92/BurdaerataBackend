@@ -30,7 +30,6 @@ class GameRepository:
 
     async def add(self, db: AsyncSession, obj: Any) -> None:
         db.add(obj)
-        await db.flush()
 
     async def list_players(self, db: AsyncSession, game_id: str) -> Sequence[GamePlayer]:
         result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == game_id))

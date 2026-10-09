@@ -36,14 +36,32 @@ Backend/
 │   ├── core/               # config, async database, WebSocket manager
 │   ├── models/             # SQLModel models
 │   ├── repositories/       # Data access layer
-│   ├── schemas/            # Pydantic schemas
+│   ├── schemas/            # Pydantic v2 schemas (with from_attributes=True)
 │   ├── services/           # Business logic (game, cards, email)
-│   └── main.py             # FastAPI app
+│   │   └── exceptions.py   # Custom exceptions with HTTP status codes
+│   ├── main.py             # FastAPI app factory (create_app)
+│   └── api/dependencies.py # Typed dependencies (DbDep, CurrentUserDep, etc.)
 ├── alembic/                # Database migrations (async env)
-├── tests/                  # pytest suite
+├── tests/                  # pytest suite (AsyncClient + pytest-asyncio)
 ├── cards_data.json         # Question + answer cards
 └── render.yaml             # Render.com deployment
 ```
+
+## Architecture Patterns Applied
+
+This codebase follows **FastAPI best practices** per the [fastapi-patterns](https://github.com/vercel-labs/agent-skills) skill:
+
+| Pattern | Implementation |
+|---------|----------------|
+| **App Factory** | `create_app()` in `app/main.py` with `lifespan` |
+| **Config** | `pydantic-settings` v2 with `extra="forbid"`, computed properties |
+| **Dependencies** | Typed aliases: `DbDep`, `CurrentUserDep`, `ActiveUserDep`, `ClerkUserIdDep` |
+| **Schemas** | Pydantic v2, `model_config = ConfigDict(from_attributes=True)`, `Field` constraints |
+| **Response Models** | All endpoints declare `response_model` (no ORM leakage) |
+| **Service Layer** | Explicit transaction boundaries, custom exceptions |
+| **Error Handling** | Typed exceptions → HTTP status mapping in router |
+| **Repositories** | Pure data access, no session management |
+| **Testing** | `AsyncClient` + `ASGITransport` + `pytest_asyncio` |
 
 ## Setup
 
@@ -61,9 +79,10 @@ cd Backend
 cp .env.example .env
 # Edit .env with your CLERK_SECRET_KEY and DATABASE_URL
 uv sync
-# NOTE: usa `python -m uvicorn` (no `uvicorn`) porque uv falla con
-# "trampoline failed to canonicalize script path" en rutas con espacios.
+# Run with uv's Python (avoids "uv trampoline failed" on paths with spaces):
 uv run python -m uvicorn app.main:app --reload --port 8000
+# OR use the venv directly:
+.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```
 
 Database migrations run automatically on startup (`init_db` applies `alembic upgrade head`), so no manual step is needed to boot.
@@ -87,7 +106,7 @@ uv run python -m pytest
 |----------|-------------|----------|
 | `DATABASE_URL` | SQLAlchemy async URL (`sqlite+aiosqlite:///...` for dev, `postgresql+asyncpg://...` for prod) | Yes |
 | `CLERK_SECRET_KEY` | Clerk secret key used to verify JWTs | Yes |
-| `AUTHORIZED_PARTIES` | Comma-separated allowed frontend origins | No |
+| `AUTHORIZED_PARTIES` | Comma-separated allowed frontend origins | No (default: `http://localhost:3000`) |
 | `RESEND_API_KEY` | Resend key for transactional email | For email endpoints |
 
 ## Database Migrations

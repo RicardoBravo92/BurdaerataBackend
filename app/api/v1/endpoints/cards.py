@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.schemas.card import (
-    QuestionCard,
-    AnswerCard,
+    QuestionCardRead,
+    AnswerCardRead,
     QuestionCardListItem,
     AnswerCardListItem,
 )
@@ -16,8 +16,8 @@ async def list_questions() -> list[QuestionCardListItem]:
     return card_service.list_questions()
 
 
-@router.get("/questions/{card_id}", response_model=QuestionCard)
-async def get_question(card_id: str) -> QuestionCard:
+@router.get("/questions/{card_id}", response_model=QuestionCardRead)
+async def get_question(card_id: str) -> QuestionCardRead:
     question = card_service.get_question_by_id(card_id)
     if not question:
         raise HTTPException(
@@ -31,8 +31,8 @@ async def list_answers() -> list[AnswerCardListItem]:
     return card_service.list_answers()
 
 
-@router.get("/answers/{card_id}", response_model=AnswerCard)
-async def get_answer(card_id: str) -> AnswerCard:
+@router.get("/answers/{card_id}", response_model=AnswerCardRead)
+async def get_answer(card_id: str) -> AnswerCardRead:
     answer = card_service.get_answer_by_id(card_id)
     if not answer:
         raise HTTPException(

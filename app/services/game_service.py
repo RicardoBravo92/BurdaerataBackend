@@ -17,6 +17,24 @@ from app.models.user import User
 from app.repositories.game_repository import game_repository
 from app.repositories.user_repository import ensure_clerk_user
 from app.services.card_service import card_service
+from app.services.exceptions import (
+    GameNotFoundError,
+    GameFullError,
+    GameAlreadyStartedError,
+    GameNotInProgressError,
+    NotGameHostError,
+    NotInGameError,
+    JudgeCannotSubmitError,
+    AlreadySubmittedError,
+    RoundNotAcceptingAnswersError,
+    RoundAlreadyFinishedError,
+    InvalidCardsError,
+    NotEnoughPlayersError,
+    AllPlayersMustSubmitError,
+    JudgeCannotWinError,
+    PlayerNotFoundError,
+    PlayerAlreadyInGameError,
+)
 
 
 def _player_to_dict(
@@ -102,6 +120,9 @@ class GameService:
         await game_repository.add(db, game)
         gp = GamePlayer(id=str(uuid4()), game_id=gid, user_id=user_id, score=0)
         await game_repository.add(db, gp)
+        await db.commit()
+        await db.refresh(game)
+
         await ws_manager.send_to_game(gid, "game_created", game.model_dump())
         return game
 
@@ -121,21 +142,22 @@ class GameService:
         await ensure_clerk_user(db, user_id)
         game = await game_repository.resolve_game(db, code_or_game_id)
         if not game:
-            raise ValueError("Game not found")
+            raise GameNotFoundError()
 
         if game.status != "waiting":
-            raise ValueError("Game has already started")
+            raise GameAlreadyStartedError()
 
         if await game_repository.get_player_row(db, game.id, user_id):
-            raise ValueError("You are already in this game")
+            raise PlayerAlreadyInGameError()
 
         n = await game_repository.count_players(db, game.id)
         if n >= game.max_players:
-            raise ValueError("Game is full")
+            raise GameFullError()
 
         gp = GamePlayer(id=str(uuid4()), game_id=game.id, user_id=user_id, score=0)
         await game_repository.add(db, gp)
         await db.commit()
+
         await ws_manager.send_to_game(
             game.id, "player_joined", {"user_id": user_id, "game": game.model_dump()}
         )
@@ -143,7 +165,7 @@ class GameService:
 
     async def get_game_players(
         self, db: AsyncSession, game_id: str
-    ) -> list[GamePlayer]:
+    ) -> list[dict[str, Any]]:
         game = await game_repository.get_game_by_id(db, game_id)
         if not game:
             return []
@@ -160,21 +182,21 @@ class GameService:
     ) -> Round:
         game = await game_repository.get_game_by_id(db, game_id)
         if not game:
-            raise ValueError("Game not found")
+            raise GameNotFoundError()
         if game.status != "waiting":
-            raise ValueError("Game has already started")
+            raise GameAlreadyStartedError()
 
         players = list(await game_repository.list_players(db, game_id))
         if len(players) < 2:
-            raise ValueError("Need at least 2 players to start the game")
+            raise NotEnoughPlayersError()
         if not any(p.user_id == user_id for p in players):
-            raise ValueError("You are not in this game")
+            raise NotInGameError()
         if game.host_player_id != user_id:
-            raise ValueError("Only the host can start the game")
+            raise NotGameHostError()
 
         first_judge = players[0].user_id
         question = card_service.get_random_question()
-        round = Round(
+        round_obj = Round(
             id=str(uuid4()),
             game_id=game_id,
             round_number=1,
@@ -183,47 +205,43 @@ class GameService:
             status="submitting",
             winning_answer_id=None,
         )
-        await game_repository.add(db, round)
+        await game_repository.add(db, round_obj)
         game.status = "playing"
         db.add(game)
-        await db.flush()
-        
+
         await self._deal_cards(db, game_id, players)
         await db.commit()
-        
-        await ws_manager.send_to_game(game_id, "game_started", {"round": round.model_dump()})
-        await ws_manager.send_to_game(game_id, "new_round", round.model_dump())
-        return round
+
+        await ws_manager.send_to_game(game_id, "game_started", {"round": round_obj.model_dump()})
+        await ws_manager.send_to_game(game_id, "new_round", round_obj.model_dump())
+        return round_obj
 
     async def get_last_round(
         self, db: AsyncSession, game_id: str
     ) -> Round | None:
-        round = await game_repository.get_last_round(db, game_id)
-        if not round:
-            return None
-        return round
+        return await game_repository.get_last_round(db, game_id)
 
     async def start_next_round(
         self, db: AsyncSession, user_id: str, game_id: str
-    ) -> dict[str, Any]:
+    ) -> Round:
         game = await game_repository.get_game_by_id(db, game_id)
         if not game:
-            raise ValueError("Game not found")
+            raise GameNotFoundError()
         if game.status != "playing":
-            raise ValueError("Game is not in playing state")
+            raise GameNotInProgressError()
 
         players = list(await game_repository.list_players(db, game_id))
         if not any(p.user_id == user_id for p in players):
-            raise ValueError("You are not in this game")
+            raise NotInGameError()
         if game.host_player_id != user_id:
-            raise ValueError("Only the host can start the next round")
+            raise NotGameHostError()
 
         last = await game_repository.get_last_round(db, game_id)
         if not last:
             raise ValueError("No previous round found")
-        
+
         if last.status != "finished":
-            raise ValueError("Current round must be finished before starting the next one")
+            raise RoundAlreadyFinishedError()
 
         next_num = last.round_number + 1
         judge_idx = (next_num - 1) % len(players)
@@ -239,34 +257,34 @@ class GameService:
         )
         await game_repository.add(db, next_round)
         await db.commit()
-        
+
         await ws_manager.send_to_game(game_id, "new_round", next_round.model_dump())
         return next_round
 
     async def create_round_answer(
         self, db: AsyncSession, round_id: str, user_id: str, cards_used: list[str]
     ) -> dict[str, Any]:
-        round = await game_repository.get_round(db, round_id)
-        if not round:
-            raise ValueError("Round not found")
-        if round.status != "submitting":
-            raise ValueError("This round is no longer accepting answers")
-        if round.judge_user_id == user_id:
-            raise ValueError("Judge cannot submit answers")
+        round_obj = await game_repository.get_round(db, round_id)
+        if not round_obj:
+            raise GameNotFoundError("Round not found")
+        if round_obj.status != "submitting":
+            raise RoundNotAcceptingAnswersError()
+        if round_obj.judge_user_id == user_id:
+            raise JudgeCannotSubmitError()
 
         existing = await game_repository.get_answer_by_user(db, round_id, user_id)
         if existing:
-            raise ValueError("You have already submitted an answer for this round")
+            raise AlreadySubmittedError()
 
         clean = [c for c in cards_used if c]
         if not clean:
-            raise ValueError("You must submit at least one card")
+            raise InvalidCardsError("You must submit at least one card")
 
-        row = await game_repository.get_player_cards_row(db, round.game_id, user_id)
+        row = await game_repository.get_player_cards_row(db, round_obj.game_id, user_id)
         current = list(row.cards or []) if row else []
         for card_id in clean:
             if card_id not in current:
-                raise ValueError("You do not have one of the submitted cards")
+                raise InvalidCardsError("You do not have one of the submitted cards")
 
         ans = RoundAnswer(
             id=str(uuid4()),
@@ -274,7 +292,7 @@ class GameService:
             user_id=user_id,
             cards_used=clean,
             final_text=card_service.compose_answer_text(
-                round.question_card_id, clean
+                round_obj.question_card_id, clean
             ),
             is_winner=False,
         )
@@ -296,12 +314,11 @@ class GameService:
         current.extend(new_cards)
         row.cards = current
         db.add(row)
-        await db.flush()
-
         await db.commit()
+
         prof = await db.get(User, user_id)
         answer_data = _answer_to_dict(ans, prof)
-        await ws_manager.send_to_game(round.game_id, "answer_submitted", answer_data)
+        await ws_manager.send_to_game(round_obj.game_id, "answer_submitted", answer_data)
         return answer_data
 
     async def get_round_answers(
@@ -319,41 +336,41 @@ class GameService:
         round_id: str,
         winning_answer_id: str,
     ) -> dict[str, Any]:
-        round = await game_repository.get_round(db, round_id)
-        if not round:
-            raise ValueError("Round not found")
-        if round.judge_user_id != user_id:
-            raise ValueError("Only the judge can select winners")
-        if round.status == "finished":
-            raise ValueError("This round is already finished")
+        round_obj = await game_repository.get_round(db, round_id)
+        if not round_obj:
+            raise GameNotFoundError("Round not found")
+        if round_obj.judge_user_id != user_id:
+            raise JudgeCannotSubmitError()
+        if round_obj.status == "finished":
+            raise RoundAlreadyFinishedError()
 
-        players_count = await game_repository.count_players(db, round.game_id)
+        players_count = await game_repository.count_players(db, round_obj.game_id)
         answers = list(await game_repository.list_answers(db, round_id))
         if len(answers) < players_count - 1:
-            raise ValueError("Cannot select a winner until all players have submitted their answers")
+            raise AllPlayersMustSubmitError()
 
         answer = await game_repository.get_answer(db, winning_answer_id)
-        if not answer or answer.round_id != round.id:
-            raise ValueError("Winning answer not found")
-        if answer.user_id == round.judge_user_id:
-            raise ValueError("The judge cannot win their own round")
+        if not answer or answer.round_id != round_obj.id:
+            raise GameNotFoundError("Winning answer not found")
+        if answer.user_id == round_obj.judge_user_id:
+            raise JudgeCannotWinError()
 
         answer.is_winner = True
-        round.winning_answer_id = winning_answer_id
-        round.status = "finished"
+        round_obj.winning_answer_id = winning_answer_id
+        round_obj.status = "finished"
         db.add(answer)
-        db.add(round)
+        db.add(round_obj)
 
-        gplayer = await game_repository.get_player_row(db, round.game_id, answer.user_id)
+        gplayer = await game_repository.get_player_row(db, round_obj.game_id, answer.user_id)
         if not gplayer:
-            raise ValueError("Player not found in game")
+            raise PlayerNotFoundError()
 
         gplayer.score = (gplayer.score or 0) + 1
         db.add(gplayer)
 
         await db.commit()
 
-        game = await game_repository.get_game_by_id(db, round.game_id)
+        game = await game_repository.get_game_by_id(db, round_obj.game_id)
         if (
             game
             and game.score_to_win is not None
@@ -372,10 +389,10 @@ class GameService:
             )
 
         await ws_manager.send_to_game(
-            round.game_id,
+            round_obj.game_id,
             "round_finished",
             {
-                "round_id": round.id,
+                "round_id": round_obj.id,
                 "winning_answer_id": winning_answer_id,
             },
         )

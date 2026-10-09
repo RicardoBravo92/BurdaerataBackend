@@ -1,8 +1,4 @@
 from clerk_backend_api import Clerk
-from app.core.config import get_settings
+from app.core.config import settings
 
-def get_clerk_client() -> Clerk:
-    settings = get_settings()
-    return Clerk(bearer_auth=settings.CLERK_SECRET_KEY)
-
-clerk_client = get_clerk_client()
+clerk_client = Clerk(bearer_auth=settings.clerk_secret_key)

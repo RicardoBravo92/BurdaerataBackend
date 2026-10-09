@@ -1,4 +1,15 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+
+
+class EmailSendRequest(BaseModel):
+    to: EmailStr
+    subject: str
+    html: str
+
+
+class EmailSendResponse(BaseModel):
+    success: bool
+    message: str
 
 
 class PasswordRecoveryRequest(BaseModel):

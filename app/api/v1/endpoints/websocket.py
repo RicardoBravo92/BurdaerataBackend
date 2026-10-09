@@ -7,7 +7,7 @@ from clerk_backend_api.security import (
 
 from app.core.ws_manager import ws_manager
 from app.core.database import AsyncSessionLocal
-from app.core.config import get_settings
+from app.core.config import settings
 from app.models.chat_message import ChatMessage
 from app.models.user import User
 from app.repositories.game_repository import game_repository
@@ -18,21 +18,19 @@ MAX_CHAT_MESSAGE_LENGTH = 500
 
 
 def _authorized_parties() -> list[str]:
-    raw = get_settings().AUTHORIZED_PARTIES
-    return [p.strip() for p in raw.split(",") if p.strip()]
+    return settings.authorized_parties
 
 
 async def _authenticate_token(token: str) -> str | None:
     """Verify the Clerk session token and return the user id, or None if invalid."""
-    settings = get_settings()
-    if not settings.CLERK_SECRET_KEY:
+    if not settings.clerk_secret_key:
         return None
 
     try:
         payload = await verify_token_async(
             token,
             VerifyTokenOptions(
-                secret_key=settings.CLERK_SECRET_KEY,
+                secret_key=settings.clerk_secret_key,
                 authorized_parties=_authorized_parties() or None,
             ),
         )

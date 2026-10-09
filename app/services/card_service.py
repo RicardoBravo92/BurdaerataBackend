@@ -1,13 +1,18 @@
 import json
 from pathlib import Path
 from random import choice
+from pydantic import BaseModel
 
-from app.schemas.card import (
-    AnswerCard,
-    AnswerCardListItem,
-    QuestionCard,
-    QuestionCardListItem,
-)
+
+class QuestionCard(BaseModel):
+    id: str
+    text: str
+    blank_count: int
+
+
+class AnswerCard(BaseModel):
+    id: str
+    text: str
 
 
 def _load_cards() -> tuple[list[QuestionCard], list[AnswerCard]]:
@@ -39,14 +44,11 @@ class CardService:
     def get_answer_by_id(self, card_id: str) -> AnswerCard | None:
         return self._answers_by_id.get(card_id)
 
-    def list_questions(self) -> list[QuestionCardListItem]:
-        return [
-            QuestionCardListItem(id=q.id, blank_count=q.blank_count)
-            for q in self._questions
-        ]
+    def list_questions(self) -> list[QuestionCard]:
+        return self._questions
 
-    def list_answers(self) -> list[AnswerCardListItem]:
-        return [AnswerCardListItem(id=a.id) for a in self._answers]
+    def list_answers(self) -> list[AnswerCard]:
+        return self._answers
 
     def get_random_question(self) -> QuestionCard:
         return choice(self._questions)
