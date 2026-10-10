@@ -1,14 +1,16 @@
 import asyncio
 from types import SimpleNamespace
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
 
 import pytest
-from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel
 
 from app.main import app
+from app.api.dependencies import get_clerk_user_id
+from app.core.database import get_db
 from app.models.chat_message import ChatMessage
 from app.models.game import Game
 from app.models.game_player import GamePlayer
@@ -21,17 +23,10 @@ TEST_USER_ID = "user_test_123"
 OTHER_USER_ID = "user_test_456"
 
 
-def _run(awaitable):
-    """Run a coroutine on a fresh event loop (no loop is running at fixture setup)."""
-    loop = asyncio.new_event_loop()
-    try:
-        return loop.run_until_complete(awaitable)
-    finally:
-        loop.close()
+import pytest_asyncio
 
-
-@pytest.fixture
-def test_engine():
+@pytest_asyncio.fixture
+async def test_engine():
     """Create an in-memory SQLite database for testing."""
     engine = create_async_engine(
         "sqlite+aiosqlite:///:memory:",
@@ -39,30 +34,11 @@ def test_engine():
         poolclass=StaticPool,
     )
 
-    async def _create_tables():
-        async with engine.begin() as conn:
-            await conn.run_sync(SQLModel.metadata.create_all)
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
 
-    _run(_create_tables())
     yield engine
-    _run(engine.dispose())
-
-
-@pytest.fixture
-def mock_clerk_auth(monkeypatch):
-    """Mock Clerk authentication, deriving the user id from the Authorization header."""
-
-    async def _fake_auth(request, options=None):
-        token = (
-            request.headers.get("Authorization", "").replace("Bearer ", "").strip()
-        ) or TEST_USER_ID
-        state = MagicMock()
-        state.is_signed_in = True
-        state.payload = {"sub": token}
-        state.message = None
-        return state
-
-    monkeypatch.setattr("app.api.dependencies.authenticate_request_async", _fake_auth)
+    await engine.dispose()
 
 
 @pytest.fixture
@@ -84,7 +60,7 @@ def mock_clerk_user_api(monkeypatch):
 
 
 @pytest.fixture
-def mock_db_session(test_engine):
+async def mock_db_session(test_engine):
     """Override get_db with a session backed by the in-memory engine."""
 
     async def _get_session():
@@ -99,12 +75,35 @@ def mock_db_session(test_engine):
     return _get_session
 
 
+# Override the authentication dependency directly for all tests
+async def _override_get_clerk_user_id(request):
+    """Override that extracts user ID from Authorization header."""
+    token = (
+        request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    ) or TEST_USER_ID
+    return token
+
+
 @pytest.fixture
-def client(mock_clerk_auth, mock_clerk_user_api, mock_db_session, monkeypatch):
-    """Create a test client with mocked dependencies."""
+async def client(mock_clerk_user_api, mock_db_session, monkeypatch):
+    """Create an async test client with mocked dependencies."""
     from app.core.database import get_db
 
+    # Override database dependency
     app.dependency_overrides[get_db] = mock_db_session
+    
+    # Override authentication dependency - bypasses Clerk entirely
+    app.dependency_overrides[get_clerk_user_id] = _override_get_clerk_user_id
+
+    # Disable rate limiting for tests
+    app.state.limiter = None
+    
+    # Also patch the module-level limiter to no-op
+    import app.core.rate_limit as rate_limit_module
+    from slowapi import Limiter
+    noop_limiter = Limiter(key_func=lambda r: "test", default_limits=[])
+    noop_limiter._limit = lambda limit: lambda f: f
+    rate_limit_module.limiter = noop_limiter
 
     # Avoid touching the configured (production) database during the app lifespan.
     async def _noop_init_db():
@@ -112,10 +111,16 @@ def client(mock_clerk_auth, mock_clerk_user_api, mock_db_session, monkeypatch):
 
     monkeypatch.setattr("app.main.init_db", _noop_init_db)
 
-    with TestClient(app) as test_client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as test_client:
         yield test_client
 
     app.dependency_overrides.clear()
+
+
+TEST_USER_ID = "user_test_123"
+OTHER_USER_ID = "user_test_456"
 
 
 @pytest.fixture

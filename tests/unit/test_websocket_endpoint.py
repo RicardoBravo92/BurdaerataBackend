@@ -7,6 +7,7 @@ from clerk_backend_api.security.types import TokenVerificationErrorReason
 
 from app.api.v1.endpoints import websocket as ws_endpoints
 from app.models.user import User
+from app.core.config import settings as app_settings
 
 
 class FakeWebSocket:
@@ -65,33 +66,21 @@ class FakeWSManager:
 
 class TestAuthorizedParties:
     def test_parses(self, monkeypatch):
-        monkeypatch.setattr(
-            ws_endpoints, "get_settings", lambda: SimpleNamespace(AUTHORIZED_PARTIES=" https://a.com ")
-        )
+        monkeypatch.setattr(app_settings, "authorized_parties_raw", " https://a.com ")
         assert ws_endpoints._authorized_parties() == ["https://a.com"]
 
     def test_empty(self, monkeypatch):
-        monkeypatch.setattr(
-            ws_endpoints, "get_settings", lambda: SimpleNamespace(AUTHORIZED_PARTIES="  , ")
-        )
+        monkeypatch.setattr(app_settings, "authorized_parties_raw", "  , ")
         assert ws_endpoints._authorized_parties() == []
 
 
 class TestAuthenticateToken:
     async def test_no_secret(self, monkeypatch):
-        monkeypatch.setattr(
-            ws_endpoints,
-            "get_settings",
-            lambda: SimpleNamespace(CLERK_SECRET_KEY="", AUTHORIZED_PARTIES=""),
-        )
+        monkeypatch.setattr(app_settings, "clerk_secret_key", "")
         assert await ws_endpoints._authenticate_token("tok") is None
 
     async def test_verification_error(self, monkeypatch):
-        monkeypatch.setattr(
-            ws_endpoints,
-            "get_settings",
-            lambda: SimpleNamespace(CLERK_SECRET_KEY="sk", AUTHORIZED_PARTIES="https://a.com"),
-        )
+        monkeypatch.setattr(app_settings, "clerk_secret_key", "sk")
 
         async def _boom(*args, **kwargs):
             raise ws_endpoints.TokenVerificationError(
@@ -102,11 +91,7 @@ class TestAuthenticateToken:
         assert await ws_endpoints._authenticate_token("tok") is None
 
     async def test_invalid_sub(self, monkeypatch):
-        monkeypatch.setattr(
-            ws_endpoints,
-            "get_settings",
-            lambda: SimpleNamespace(CLERK_SECRET_KEY="sk", AUTHORIZED_PARTIES="https://a.com"),
-        )
+        monkeypatch.setattr(app_settings, "clerk_secret_key", "sk")
 
         async def _verify(*args, **kwargs):
             return {"sub": 42}
@@ -115,11 +100,7 @@ class TestAuthenticateToken:
         assert await ws_endpoints._authenticate_token("tok") is None
 
     async def test_success(self, monkeypatch):
-        monkeypatch.setattr(
-            ws_endpoints,
-            "get_settings",
-            lambda: SimpleNamespace(CLERK_SECRET_KEY="sk", AUTHORIZED_PARTIES="https://a.com"),
-        )
+        monkeypatch.setattr(app_settings, "clerk_secret_key", "sk")
 
         async def _verify(*args, **kwargs):
             return {"sub": "user-1"}
@@ -138,7 +119,8 @@ class TestWebsocketEndpoint:
         monkeypatch.setattr(ws_endpoints, "ws_manager", ws_manager)
         ws = FakeWebSocket()
 
-        await ws_endpoints.websocket_endpoint(ws, "game-1", token="tok")
+        # New signature: authorization header instead of token query param
+        await ws_endpoints.websocket_endpoint(ws, "game-1", authorization="Bearer invalid")
 
         assert ws.closed == [(4001, "Invalid token")]
         ws_manager.connect.assert_not_awaited()
@@ -158,7 +140,7 @@ class TestWebsocketEndpoint:
         monkeypatch.setattr(ws_endpoints, "ws_manager", ws_manager)
         ws = FakeWebSocket()
 
-        await ws_endpoints.websocket_endpoint(ws, "game-1", token="tok")
+        await ws_endpoints.websocket_endpoint(ws, "game-1", authorization="Bearer tok")
 
         assert ws.closed == [(4003, "Not a player in this game")]
         ws_manager.connect.assert_not_awaited()
@@ -186,7 +168,7 @@ class TestWebsocketEndpoint:
             ]
         )
 
-        await ws_endpoints.websocket_endpoint(ws, "game-1", token="tok")
+        await ws_endpoints.websocket_endpoint(ws, "game-1", authorization="Bearer tok")
 
         ws_manager.connect.assert_awaited_once()
         ws_manager.broadcast_to_game.assert_awaited_once()
@@ -219,7 +201,7 @@ class TestWebsocketEndpoint:
             messages=[{"event": "send_chat_message", "data": {"text": "  hola  "}}]
         )
 
-        await ws_endpoints.websocket_endpoint(ws, "game-1", token="tok")
+        await ws_endpoints.websocket_endpoint(ws, "game-1", authorization="Bearer tok")
 
         _, event, payload = ws_manager.broadcast_to_game.await_args.args
         assert event == "new_chat_message"
@@ -246,7 +228,12 @@ class TestWebsocketEndpoint:
             ]
         )
 
-        await ws_endpoints.websocket_endpoint(ws, "game-1", token="tok")
+        await ws_endpoints.websocket_endpoint(ws, "game-1", authorization="Bearer tok")
 
         ws_manager.broadcast_to_game.assert_not_awaited()
         ws_manager.disconnect.assert_called_once()
+
+
+# Re-export test dependencies
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock

@@ -10,22 +10,22 @@ from app.models.user import User
 
 
 def _authorized_parties() -> Optional[list[str]]:
-    raw = settings.AUTHORIZED_PARTIES
-    if not raw:
+    parties = settings.authorized_parties
+    # Return None for default/empty to allow any origin (Clerk behavior)
+    if not parties or parties == ["http://localhost:3000"]:
         return None
-    parties = [p.strip() for p in raw.split(",") if p.strip()]
-    return parties or None
+    return parties
 
 
 async def get_clerk_user_id(request: Request) -> str:
-    if not settings.CLERK_SECRET_KEY:
+    if not settings.clerk_secret_key:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="CLERK_SECRET_KEY is not configured on the server",
         )
 
     options = AuthenticateRequestOptions(
-        secret_key=settings.CLERK_SECRET_KEY,
+        secret_key=settings.clerk_secret_key,
         authorized_parties=_authorized_parties(),
     )
     state = await authenticate_request_async(request, options)

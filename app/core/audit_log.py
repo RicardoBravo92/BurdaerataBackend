@@ -202,7 +202,34 @@ def log_websocket_event(
     )
 
 
-# Configure audit logger format
+class AuditLogFormatter(logging.Formatter):
+    """Custom formatter that properly handles extra fields."""
+    
+    def format(self, record: logging.LogRecord) -> str:
+        # Collect standard fields
+        log_dict = {
+            "timestamp": self.formatTime(record),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+        
+        # Add extra fields (skip standard logging fields)
+        standard_fields = {
+            "name", "msg", "args", "created", "filename", "funcName",
+            "levelname", "levelno", "lineno", "module", "msecs",
+            "message", "pathname", "process", "processName", "relativeCreated",
+            "thread", "threadName", "exc_info", "exc_text", "stack_info",
+            "asctime"
+        }
+        
+        for key, value in record.__dict__.items():
+            if key not in standard_fields:
+                log_dict[key] = value
+        
+        return json.dumps(log_dict, ensure_ascii=False, default=str)
+
+
 def configure_audit_logging(log_level: str = "INFO", json_format: bool = False) -> None:
     """Configure audit loggers with appropriate handlers."""
     level = getattr(logging, log_level.upper(), logging.INFO)
@@ -213,16 +240,11 @@ def configure_audit_logging(log_level: str = "INFO", json_format: bool = False) 
     if not audit_logger.handlers:
         handler = logging.StreamHandler()
         if json_format:
-            # JSON format for log aggregation systems
-            formatter = logging.Formatter(
-                '{"timestamp": "%(asctime)s", "level": "%(levelname)s", '
-                '"logger": "%(name)s", "message": "%(message)s", '
-                '"extra": %(extra)s}'
-            )
+            formatter = AuditLogFormatter()
         else:
-            # Human-readable format
+            # Human-readable format - just use standard format without extra
             formatter = logging.Formatter(
-                "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s | %(extra)s"
+                "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
             )
         handler.setFormatter(formatter)
         audit_logger.addHandler(handler)

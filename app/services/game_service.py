@@ -240,7 +240,7 @@ class GameService:
 
         last = await game_repository.get_last_round(db, game_id)
         if not last:
-            raise ValueError("No previous round found")
+            raise GameNotFoundError("Round not found")
 
         if last.status != "finished":
             raise RoundAlreadyFinishedError()

@@ -37,6 +37,12 @@ class FakeSession:
     async def get(self, model, id):
         return self.fetched.get(id, self.by_id.get(id))
 
+    async def refresh(self, obj):
+        # For testing, just ensure the object is in by_id
+        if getattr(obj, "id", None):
+            self.by_id[obj.id] = obj
+        return None
+
 
 @pytest.fixture
 def fake_session():
