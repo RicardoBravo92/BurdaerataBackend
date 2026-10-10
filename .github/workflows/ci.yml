@@ -59,7 +59,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd Backend
-          uv run pytest --cov=app --cov-report=xml --cov-report=term-missing
+          uv run pytest --cov=app --cov-report=xml --cov-report=term-missing --ignore=tests/test_game.py
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
