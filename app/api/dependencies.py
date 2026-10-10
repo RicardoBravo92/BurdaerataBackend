@@ -1,7 +1,8 @@
-from typing import Annotated, Optional
-from fastapi import Depends, HTTPException, Request, status
+from typing import Annotated
+
 from clerk_backend_api.security import authenticate_request_async
 from clerk_backend_api.security.types import AuthenticateRequestOptions
+from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -9,7 +10,7 @@ from app.core.database import get_db
 from app.models.user import User
 
 
-def _authorized_parties() -> Optional[list[str]]:
+def _authorized_parties() -> list[str] | None:
     parties = settings.authorized_parties
     # Return None for default/empty to allow any origin (Clerk behavior)
     if not parties or parties == ["http://localhost:3000"]:

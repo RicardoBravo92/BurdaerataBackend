@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict
 
 
 class GamePlayerBase(BaseModel):
@@ -17,8 +17,8 @@ class GamePlayerRead(GamePlayerBase):
     game_id: str
     is_host: bool
     joined_at: datetime
-    user_full_name: Optional[str] = None
-    user_avatar_url: Optional[str] = None
+    user_full_name: str | None = None
+    user_avatar_url: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

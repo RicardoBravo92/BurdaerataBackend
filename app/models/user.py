@@ -1,4 +1,3 @@
-from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
@@ -10,5 +9,5 @@ class User(SQLModel, table=True):
     full_name: str = Field(default="Player")
     first_name: str = Field(default="")
     last_name: str = Field(default="")
-    email: Optional[str] = Field(default=None, unique=True, index=True, max_length=320)
-    avatar_url: Optional[str] = Field(default=None, max_length=2048)
+    email: str | None = Field(default=None, unique=True, index=True, max_length=320)
+    avatar_url: str | None = Field(default=None, max_length=2048)

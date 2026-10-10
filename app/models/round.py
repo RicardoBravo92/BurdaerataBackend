@@ -1,4 +1,3 @@
-from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
@@ -16,5 +15,5 @@ class Round(SQLModel, table=True):
         foreign_key="users.id", max_length=255, ondelete="CASCADE"
     )
     status: str = Field(default="submitting", max_length=32)
-    winning_answer_id: Optional[str] = Field(default=None, max_length=36)
+    winning_answer_id: str | None = Field(default=None, max_length=36)
    

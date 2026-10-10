@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class GamePlayerCreate(BaseModel):
     game_id: int
     user_id: int

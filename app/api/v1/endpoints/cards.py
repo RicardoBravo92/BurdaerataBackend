@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.schemas.card import (
-    QuestionCardRead,
+    AnswerCardListItem,
     AnswerCardRead,
     QuestionCardListItem,
-    AnswerCardListItem,
+    QuestionCardRead,
 )
 from app.services.card_service import card_service
 

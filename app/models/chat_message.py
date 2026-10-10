@@ -1,7 +1,7 @@
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
-from sqlmodel import Field, SQLModel, Column, DateTime
+from datetime import UTC, datetime
+
+from sqlmodel import Column, DateTime, Field, SQLModel
 
 
 class ChatMessage(SQLModel, table=True):
@@ -17,7 +17,7 @@ class ChatMessage(SQLModel, table=True):
         foreign_key="users.id", index=True, max_length=255, ondelete="CASCADE"
     )
     text: str = Field(max_length=1000)
-    created_at: Optional[datetime] = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+    created_at: datetime | None = Field(
+        default_factory=lambda: datetime.now(UTC),
         sa_column=Column(DateTime(timezone=True), nullable=True),
     )

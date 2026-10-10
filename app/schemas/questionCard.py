@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class QuestionCardCreate(BaseModel):
     text: str
     blank_count: int

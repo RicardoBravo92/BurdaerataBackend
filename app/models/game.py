@@ -1,4 +1,4 @@
-from typing import Optional
+
 from sqlmodel import Field, SQLModel
 
 
@@ -13,4 +13,4 @@ class Game(SQLModel, table=True):
     status: str = Field(default="waiting", max_length=32)
     max_players: int = Field(default=8)
     public: bool = Field(default=True)
-    score_to_win: Optional[int] = Field(default=7)
+    score_to_win: int | None = Field(default=7)

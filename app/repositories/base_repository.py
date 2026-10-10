@@ -1,20 +1,21 @@
-from typing import Generic, TypeVar, Type, Optional, List, Any
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, TypeVar
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import SQLModel
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
 
-class BaseRepository(Generic[ModelType]):
+class BaseRepository[ModelType: SQLModel]:
     """
     Base repository for common CRUD operations.
     Since we are using SQLModel, models often serve as their own schemas.
     """
 
-    def __init__(self, model: Type[ModelType]):
+    def __init__(self, model: type[ModelType]):
         self.model = model
 
-    async def get(self, db: AsyncSession, id: Any) -> Optional[ModelType]:
+    async def get(self, db: AsyncSession, id: Any) -> ModelType | None:
         """Fetch a single record by ID."""
         result = await db.execute(
             select(self.model).where(self.model.id == id)
@@ -27,7 +28,7 @@ class BaseRepository(Generic[ModelType]):
         *, 
         skip: int = 0, 
         limit: int = 100
-    ) -> List[ModelType]:
+    ) -> list[ModelType]:
         """Fetch multiple records with pagination."""
         result = await db.execute(
             select(self.model).offset(skip).limit(limit)
@@ -63,7 +64,7 @@ class BaseRepository(Generic[ModelType]):
         await db.refresh(db_obj)
         return db_obj
 
-    async def remove(self, db: AsyncSession, *, id: Any) -> Optional[ModelType]:
+    async def remove(self, db: AsyncSession, *, id: Any) -> ModelType | None:
         """Delete a record by ID."""
         obj = await self.get(db, id)
         if obj:

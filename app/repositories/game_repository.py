@@ -1,4 +1,5 @@
-from typing import Any, Optional, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 from sqlalchemy import delete, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,14 +12,14 @@ from app.models.round_answer import RoundAnswer
 
 
 class GameRepository:
-    async def get_game_by_id(self, db: AsyncSession, game_id: str) -> Optional[Game]:
+    async def get_game_by_id(self, db: AsyncSession, game_id: str) -> Game | None:
         return await db.get(Game, game_id)
 
-    async def get_game_by_code(self, db: AsyncSession, code: str) -> Optional[Game]:
+    async def get_game_by_code(self, db: AsyncSession, code: str) -> Game | None:
         result = await db.execute(select(Game).where(Game.code == code))
         return result.scalar_one_or_none()
 
-    async def resolve_game(self, db: AsyncSession, code_or_id: str) -> Optional[Game]:
+    async def resolve_game(self, db: AsyncSession, code_or_id: str) -> Game | None:
         g = await self.get_game_by_id(db, code_or_id)
         if g:
             return g
@@ -43,7 +44,7 @@ class GameRepository:
 
     async def get_player_row(
         self, db: AsyncSession, game_id: str, user_id: str
-    ) -> Optional[GamePlayer]:
+    ) -> GamePlayer | None:
         result = await db.execute(
             select(GamePlayer).where(
                 GamePlayer.game_id == game_id,
@@ -68,7 +69,7 @@ class GameRepository:
             )
         )
 
-    async def get_last_round(self, db: AsyncSession, game_id: str) -> Optional[Round]:
+    async def get_last_round(self, db: AsyncSession, game_id: str) -> Round | None:
         result = await db.execute(
             select(Round)
             .where(Round.game_id == game_id)
@@ -77,7 +78,7 @@ class GameRepository:
         )
         return result.scalar_one_or_none()
 
-    async def get_round(self, db: AsyncSession, round_id: str) -> Optional[Round]:
+    async def get_round(self, db: AsyncSession, round_id: str) -> Round | None:
         return await db.get(Round, round_id)
 
     async def list_answers(self, db: AsyncSession, round_id: str) -> Sequence[RoundAnswer]:
@@ -88,12 +89,12 @@ class GameRepository:
         )
         return result.scalars().all()
 
-    async def get_answer(self, db: AsyncSession, answer_id: str) -> Optional[RoundAnswer]:
+    async def get_answer(self, db: AsyncSession, answer_id: str) -> RoundAnswer | None:
         return await db.get(RoundAnswer, answer_id)
 
     async def get_answer_by_user(
         self, db: AsyncSession, round_id: str, user_id: str
-    ) -> Optional[RoundAnswer]:
+    ) -> RoundAnswer | None:
         result = await db.execute(
             select(RoundAnswer).where(
                 RoundAnswer.round_id == round_id,
@@ -104,7 +105,7 @@ class GameRepository:
 
     async def get_player_cards_row(
         self, db: AsyncSession, game_id: str, user_id: str
-    ) -> Optional[PlayerCard]:
+    ) -> PlayerCard | None:
         result = await db.execute(
             select(PlayerCard).where(
                 PlayerCard.game_id == game_id,

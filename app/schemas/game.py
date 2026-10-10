@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class GameBase(BaseModel):
@@ -16,10 +16,10 @@ class GameCreate(GameBase):
 
 
 class GameUpdate(BaseModel):
-    status: Optional[str] = Field(default=None, pattern="^(waiting|playing|finished)$")
-    max_players: Optional[int] = Field(default=None, ge=2, le=20)
-    score_to_win: Optional[int] = Field(default=None, ge=1)
-    public: Optional[bool] = None
+    status: str | None = Field(default=None, pattern="^(waiting|playing|finished)$")
+    max_players: int | None = Field(default=None, ge=2, le=20)
+    score_to_win: int | None = Field(default=None, ge=1)
+    public: bool | None = None
 
 
 class GameRead(GameBase):

@@ -1,15 +1,18 @@
-from typing import Optional
 
-from sqlalchemy.ext.asyncio import AsyncSession
+import logging
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.clerk import clerk_client
 from app.models.user import User
 from app.repositories.base_repository import BaseRepository
-from app.core.clerk import clerk_client
+
+logger = logging.getLogger(__name__)
 
 
 class UserRepository(BaseRepository[User]):
-    async def get_by_email(self, db: AsyncSession, email: str) -> Optional[User]:
+    async def get_by_email(self, db: AsyncSession, email: str) -> User | None:
         result = await db.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()
 
@@ -50,7 +53,8 @@ async def ensure_clerk_user(db: AsyncSession, user_id: str) -> User:
                 user.avatar_url = clerk_user.image_url
                 db.add(user)
                 
-        except Exception:
+        except (ConnectionError, RuntimeError, ValueError) as e:
+            logger.warning("Failed to fetch Clerk user %s: %s", user_id, e)
             if not user:
                 user = User(
                     id=user_id,

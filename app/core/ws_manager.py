@@ -1,7 +1,10 @@
 import asyncio
+import logging
 from typing import Any
 
 from fastapi import WebSocket
+
+logger = logging.getLogger(__name__)
 
 
 class ConnectionManager:
@@ -86,18 +89,19 @@ class ConnectionManager:
                         # Wait for pong with timeout
                         try:
                             await asyncio.wait_for(pong_waiter, timeout=self.PONG_TIMEOUT)
-                        except asyncio.TimeoutError:
+                        except TimeoutError:
                             # No pong received - close connection
                             await websocket.close(code=4009, reason="Heartbeat timeout")
                             break
                             
-                    except Exception:
+                    except (asyncio.CancelledError, ConnectionError, RuntimeError) as e:
                         # Connection error - will be handled by disconnect
+                        logger.debug("WebSocket ping error: %s", e)
                         break
             except asyncio.CancelledError:
                 pass
-            except Exception:
-                pass
+            except (ConnectionError, RuntimeError) as e:
+                logger.debug("Heartbeat task error: %s", e)
 
         task = asyncio.create_task(heartbeat())
         self._heartbeat_tasks[f"{game_id}:{user_id}"] = task
@@ -124,7 +128,8 @@ class ConnectionManager:
         for user_id, ws in self._connections[game_id].items():
             try:
                 await ws.send_json(message)
-            except Exception:
+            except (RuntimeError, ConnectionError) as e:
+                logger.debug("Failed to send to user %s: %s", user_id, e)
                 disconnected.append(user_id)
         for uid in disconnected:
             self.disconnect(game_id, uid)

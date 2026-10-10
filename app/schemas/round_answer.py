@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict
 
 
 class RoundAnswerBase(BaseModel):
@@ -18,6 +18,6 @@ class RoundAnswerCreate(RoundAnswerBase):
 class RoundAnswerRead(RoundAnswerBase):
     id: str
     created_at: datetime
-    user_full_name: Optional[str] = None
+    user_full_name: str | None = None
 
     model_config = ConfigDict(from_attributes=True)

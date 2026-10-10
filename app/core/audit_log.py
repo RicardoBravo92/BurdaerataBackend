@@ -3,7 +3,7 @@ import logging
 import time
 import uuid
 from contextvars import ContextVar
-from typing import Any, Optional
+from typing import Any
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -98,9 +98,9 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
 
 def log_security_event(
     event_type: str,
-    user_id: Optional[str] = None,
-    ip: Optional[str] = None,
-    details: Optional[dict[str, Any]] = None,
+    user_id: str | None = None,
+    ip: str | None = None,
+    details: dict[str, Any] | None = None,
     severity: str = "info",
 ) -> None:
     """
@@ -133,7 +133,7 @@ def log_auth_event(
     user_id: str,
     ip: str,
     success: bool,
-    details: Optional[dict[str, Any]] = None,
+    details: dict[str, Any] | None = None,
 ) -> None:
     """Log authentication-related events."""
     log_security_event(
@@ -152,7 +152,7 @@ def log_authorization_event(
     resource: str,
     action: str,
     allowed: bool,
-    details: Optional[dict[str, Any]] = None,
+    details: dict[str, Any] | None = None,
 ) -> None:
     """Log authorization (permission) decisions."""
     log_security_event(
@@ -170,7 +170,7 @@ def log_authorization_event(
 
 
 def log_rate_limit_event(
-    user_id: Optional[str],
+    user_id: str | None,
     ip: str,
     endpoint: str,
     limit: str,
@@ -190,7 +190,7 @@ def log_websocket_event(
     game_id: str,
     user_id: str,
     ip: str,
-    details: Optional[dict[str, Any]] = None,
+    details: dict[str, Any] | None = None,
 ) -> None:
     """Log WebSocket connection events."""
     log_security_event(

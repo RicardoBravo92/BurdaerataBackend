@@ -1,5 +1,7 @@
-from typing import Any, Optional
-from sqlmodel import Field, SQLModel, JSON
+from typing import Any
+
+from sqlmodel import JSON, Field, SQLModel
+
 
 class RoundAnswer(SQLModel, table=True):
     __tablename__ = "round_answers"
@@ -13,5 +15,5 @@ class RoundAnswer(SQLModel, table=True):
     )
     user_id: str = Field(foreign_key="users.id", max_length=255, ondelete="CASCADE")
     cards_used: list[Any] = Field(default_factory=list, sa_type=JSON)
-    final_text: Optional[str] = Field(default=None, max_length=2048)
+    final_text: str | None = Field(default=None, max_length=2048)
     is_winner: bool = Field(default=False)

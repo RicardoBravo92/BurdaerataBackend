@@ -1,38 +1,35 @@
-from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, HTTPException, Request, status
 
 from app.api.dependencies import CurrentUserDep, DbDep
 from app.core.rate_limit import limiter
 from app.schemas.game import (
     CreateGameRequest,
     GameRead,
-    GameListResponse,
     JoinGameRequest,
 )
-from app.schemas.game_player import GamePlayerRead, PlayerCardsRead, LeaveGameResponse
-from app.schemas.round import RoundRead, CreateRoundAnswerRequest, SelectWinnerRequest
+from app.schemas.game_player import GamePlayerRead, LeaveGameResponse, PlayerCardsRead
+from app.schemas.round import CreateRoundAnswerRequest, RoundRead, SelectWinnerRequest
 from app.schemas.round_answer import RoundAnswerRead
-from app.services.game_service import game_service
 from app.services.exceptions import (
-    GameNotFoundError,
-    GameFullError,
+    AllPlayersMustSubmitError,
+    AlreadySubmittedError,
     GameAlreadyStartedError,
+    GameFullError,
+    GameNotFoundError,
     GameNotInProgressError,
+    InvalidCardsError,
+    JudgeCannotSubmitError,
+    JudgeCannotWinError,
+    NotEnoughPlayersError,
     NotGameHostError,
     NotInGameError,
-    JudgeCannotSubmitError,
-    AlreadySubmittedError,
-    RoundNotAcceptingAnswersError,
-    RoundAlreadyFinishedError,
-    InvalidCardsError,
-    NotEnoughPlayersError,
-    AllPlayersMustSubmitError,
-    JudgeCannotWinError,
-    PlayerNotFoundError,
     PlayerAlreadyInGameError,
+    PlayerNotFoundError,
+    RoundAlreadyFinishedError,
+    RoundNotAcceptingAnswersError,
 )
+from app.services.game_service import game_service
 
 router = APIRouter()
 

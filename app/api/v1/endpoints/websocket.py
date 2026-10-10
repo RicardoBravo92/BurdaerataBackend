@@ -1,17 +1,18 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Header
+import html
+
 from clerk_backend_api.security import (
     TokenVerificationError,
     VerifyTokenOptions,
     verify_token_async,
 )
+from fastapi import APIRouter, Header, WebSocket, WebSocketDisconnect
 
-from app.core.ws_manager import ws_manager
-from app.core.database import AsyncSessionLocal
 from app.core.config import settings
+from app.core.database import AsyncSessionLocal
+from app.core.ws_manager import ws_manager
 from app.models.chat_message import ChatMessage
 from app.models.user import User
 from app.repositories.game_repository import game_repository
-import html
 
 router = APIRouter()
 

@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints.game import router as game_router
-from app.api.v1.endpoints.websocket import router as ws_router
 from app.api.v1.endpoints.cards import router as cards_router
 from app.api.v1.endpoints.email import router as email_router
+from app.api.v1.endpoints.game import router as game_router
+from app.api.v1.endpoints.websocket import router as ws_router
 
 api_router = APIRouter()
 api_router.include_router(game_router, prefix="/games", tags=["games"])

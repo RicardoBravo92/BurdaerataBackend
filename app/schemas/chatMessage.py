@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class ChatMessageCreate(BaseModel):
     game_id: str = Field(...)
     user_id: str = Field(...)

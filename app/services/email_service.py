@@ -1,4 +1,5 @@
 import resend
+
 from app.core.config import settings
 
 resend.api_key = settings.resend_api_key

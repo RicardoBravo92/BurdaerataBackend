@@ -1,14 +1,14 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserBase(BaseModel):
     full_name: str = Field(default="Player", max_length=255)
     first_name: str = Field(default="", max_length=255)
     last_name: str = Field(default="", max_length=255)
-    email: Optional[EmailStr] = None
-    avatar_url: Optional[str] = Field(default=None, max_length=2048)
+    email: EmailStr | None = None
+    avatar_url: str | None = Field(default=None, max_length=2048)
 
 
 class UserCreate(UserBase):
@@ -16,11 +16,11 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    full_name: Optional[str] = Field(default=None, max_length=255)
-    first_name: Optional[str] = Field(default=None, max_length=255)
-    last_name: Optional[str] = Field(default=None, max_length=255)
-    email: Optional[EmailStr] = None
-    avatar_url: Optional[str] = Field(default=None, max_length=2048)
+    full_name: str | None = Field(default=None, max_length=255)
+    first_name: str | None = Field(default=None, max_length=255)
+    last_name: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = None
+    avatar_url: str | None = Field(default=None, max_length=2048)
 
 
 class UserRead(UserBase):

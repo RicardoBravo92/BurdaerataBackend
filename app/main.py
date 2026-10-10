@@ -1,16 +1,17 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.api.v1.router import api_router
+from app.core.audit_log import AuditLogMiddleware, configure_audit_logging
 from app.core.config import settings
 from app.core.database import engine, init_db
 from app.core.rate_limit import limiter
-from app.core.security_headers import SecurityHeadersMiddleware
 from app.core.request_size_limit import RequestSizeLimitMiddleware
-from app.core.audit_log import AuditLogMiddleware, configure_audit_logging
+from app.core.security_headers import SecurityHeadersMiddleware
 
 
 @asynccontextmanager

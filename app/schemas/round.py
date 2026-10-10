@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RoundBase(BaseModel):
@@ -8,7 +8,7 @@ class RoundBase(BaseModel):
     question_card_id: str
     judge_user_id: str
     status: str = Field(pattern="^(submitting|judging|finished)$")
-    winning_answer_id: Optional[str] = None
+    winning_answer_id: str | None = None
 
 
 class RoundCreate(RoundBase):
@@ -16,8 +16,8 @@ class RoundCreate(RoundBase):
 
 
 class RoundUpdate(BaseModel):
-    status: Optional[str] = Field(default=None, pattern="^(submitting|judging|finished)$")
-    winning_answer_id: Optional[str] = None
+    status: str | None = Field(default=None, pattern="^(submitting|judging|finished)$")
+    winning_answer_id: str | None = None
 
 
 class RoundRead(RoundBase):
