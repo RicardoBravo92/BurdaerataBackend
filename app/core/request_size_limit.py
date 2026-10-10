@@ -7,7 +7,7 @@ from starlette.status import HTTP_413_REQUEST_ENTITY_TOO_LARGE
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     """
     Limit request body size to prevent DoS via large payloads.
-    
+
     Default limits:
     - JSON: 1 MB
     - Form/multipart: 10 MB
@@ -17,9 +17,9 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app,
-        max_json_size: int = 1_048_576,      # 1 MB
-        max_form_size: int = 10_485_760,     # 10 MB
-        max_other_size: int = 1_048_576,     # 1 MB
+        max_json_size: int = 1_048_576,  # 1 MB
+        max_form_size: int = 10_485_760,  # 10 MB
+        max_other_size: int = 1_048_576,  # 1 MB
     ):
         super().__init__(app)
         self.max_json_size = max_json_size
@@ -42,7 +42,10 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
         # Determine limit based on content type
         if "application/json" in content_type:
             limit = self.max_json_size
-        elif "multipart/form-data" in content_type or "application/x-www-form-urlencoded" in content_type:
+        elif (
+            "multipart/form-data" in content_type
+            or "application/x-www-form-urlencoded" in content_type
+        ):
             limit = self.max_form_size
         else:
             limit = self.max_other_size

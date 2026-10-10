@@ -9,15 +9,11 @@ from app.core.config import settings as app_settings
 
 class TestAuthorizedParties:
     def test_empty_returns_none(self, monkeypatch):
-        monkeypatch.setattr(
-            app_settings, "authorized_parties_raw", "  "
-        )
+        monkeypatch.setattr(app_settings, "authorized_parties_raw", "  ")
         assert dependencies._authorized_parties() is None
 
     def test_only_commas_returns_none(self, monkeypatch):
-        monkeypatch.setattr(
-            app_settings, "authorized_parties_raw", ", ,"
-        )
+        monkeypatch.setattr(app_settings, "authorized_parties_raw", ", ,")
         assert dependencies._authorized_parties() is None
 
     def test_parses_list(self, monkeypatch):

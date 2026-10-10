@@ -3,6 +3,7 @@
 
 class ServiceError(Exception):
     """Base exception for service layer errors."""
+
     status_code = 400
     detail = "Service error"
 
@@ -14,30 +15,35 @@ class ServiceError(Exception):
 
 class NotFoundError(ServiceError):
     """Resource not found."""
+
     status_code = 404
     detail = "Resource not found"
 
 
 class UnauthorizedError(ServiceError):
     """Authentication required."""
+
     status_code = 401
     detail = "Unauthorized"
 
 
 class ForbiddenError(ServiceError):
     """Authenticated but not authorized."""
+
     status_code = 403
     detail = "Forbidden"
 
 
 class ConflictError(ServiceError):
     """Resource conflict (e.g., duplicate)."""
+
     status_code = 409
     detail = "Conflict"
 
 
 class ValidationError(ServiceError):
     """Input validation failed."""
+
     status_code = 422
     detail = "Validation error"
 

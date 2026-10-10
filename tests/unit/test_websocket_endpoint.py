@@ -1,13 +1,11 @@
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-from fastapi import WebSocketDisconnect
 from clerk_backend_api.security.types import TokenVerificationErrorReason
+from fastapi import WebSocketDisconnect
 
 from app.api.v1.endpoints import websocket as ws_endpoints
-from app.models.user import User
 from app.core.config import settings as app_settings
+from app.models.user import User
 
 
 class FakeWebSocket:
@@ -120,7 +118,9 @@ class TestWebsocketEndpoint:
         ws = FakeWebSocket()
 
         # New signature: authorization header instead of token query param
-        await ws_endpoints.websocket_endpoint(ws, "game-1", authorization="Bearer invalid")
+        await ws_endpoints.websocket_endpoint(
+            ws, "game-1", authorization="Bearer invalid"
+        )
 
         assert ws.closed == [(4001, "Invalid token")]
         ws_manager.connect.assert_not_awaited()
@@ -192,7 +192,9 @@ class TestWebsocketEndpoint:
         repo.get_player_row.return_value = MagicMock()
         monkeypatch.setattr(ws_endpoints, "game_repository", repo)
         monkeypatch.setattr(
-            ws_endpoints, "AsyncSessionLocal", lambda: FakeSessionCM(ChatSession(user=None))
+            ws_endpoints,
+            "AsyncSessionLocal",
+            lambda: FakeSessionCM(ChatSession(user=None)),
         )
         ws_manager = FakeWSManager()
         monkeypatch.setattr(ws_endpoints, "ws_manager", ws_manager)
@@ -235,5 +237,3 @@ class TestWebsocketEndpoint:
 
 
 # Re-export test dependencies
-from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock

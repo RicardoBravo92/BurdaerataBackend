@@ -9,6 +9,7 @@ class GamePlayerCreate(BaseModel):
     is_ready: bool
     avatar_url: str
 
+
 class GamePlayerUpdate(BaseModel):
     game_id: int
     user_id: int
@@ -16,6 +17,7 @@ class GamePlayerUpdate(BaseModel):
     is_host: bool
     is_ready: bool
     avatar_url: str
+
 
 class GamePlayerResponse(BaseModel):
     id: int

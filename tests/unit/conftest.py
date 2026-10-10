@@ -41,7 +41,6 @@ class FakeSession:
         # For testing, just ensure the object is in by_id
         if getattr(obj, "id", None):
             self.by_id[obj.id] = obj
-        return None
 
 
 @pytest.fixture

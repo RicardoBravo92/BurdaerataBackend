@@ -128,14 +128,10 @@ class GameService:
         await ws_manager.send_to_game(gid, "game_created", game.model_dump())
         return game
 
-    async def get_game_by_id(
-        self, db: AsyncSession, game_id: str
-    ) -> Game | None:
+    async def get_game_by_id(self, db: AsyncSession, game_id: str) -> Game | None:
         return await game_repository.get_game_by_id(db, game_id)
 
-    async def get_game_by_code(
-        self, db: AsyncSession, code: str
-    ) -> Game | None:
+    async def get_game_by_code(self, db: AsyncSession, code: str) -> Game | None:
         return await game_repository.get_game_by_code(db, code)
 
     async def join_game(
@@ -179,9 +175,7 @@ class GameService:
             for p in players
         ]
 
-    async def start_game(
-        self, db: AsyncSession, user_id: str, game_id: str
-    ) -> Round:
+    async def start_game(self, db: AsyncSession, user_id: str, game_id: str) -> Round:
         game = await game_repository.get_game_by_id(db, game_id)
         if not game:
             raise GameNotFoundError()
@@ -214,13 +208,13 @@ class GameService:
         await self._deal_cards(db, game_id, players)
         await db.commit()
 
-        await ws_manager.send_to_game(game_id, "game_started", {"round": round_obj.model_dump()})
+        await ws_manager.send_to_game(
+            game_id, "game_started", {"round": round_obj.model_dump()}
+        )
         await ws_manager.send_to_game(game_id, "new_round", round_obj.model_dump())
         return round_obj
 
-    async def get_last_round(
-        self, db: AsyncSession, game_id: str
-    ) -> Round | None:
+    async def get_last_round(self, db: AsyncSession, game_id: str) -> Round | None:
         return await game_repository.get_last_round(db, game_id)
 
     async def start_next_round(
@@ -320,7 +314,9 @@ class GameService:
 
         prof = await db.get(User, user_id)
         answer_data = _answer_to_dict(ans, prof)
-        await ws_manager.send_to_game(round_obj.game_id, "answer_submitted", answer_data)
+        await ws_manager.send_to_game(
+            round_obj.game_id, "answer_submitted", answer_data
+        )
         return answer_data
 
     async def get_round_answers(
@@ -363,7 +359,9 @@ class GameService:
         db.add(answer)
         db.add(round_obj)
 
-        gplayer = await game_repository.get_player_row(db, round_obj.game_id, answer.user_id)
+        gplayer = await game_repository.get_player_row(
+            db, round_obj.game_id, answer.user_id
+        )
         if not gplayer:
             raise PlayerNotFoundError()
 
@@ -435,8 +433,7 @@ class GameService:
             and players
         ):
             answered = {
-                a.user_id
-                for a in await game_repository.list_answers(db, last_round.id)
+                a.user_id for a in await game_repository.list_answers(db, last_round.id)
             }
             candidates = [p for p in players if p.user_id not in answered] or players
             last_round.judge_user_id = candidates[0].user_id

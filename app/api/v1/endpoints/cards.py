@@ -24,7 +24,9 @@ async def get_question(card_id: str) -> QuestionCardRead:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Question card not found"
         )
-    return QuestionCardRead(id=question.id, text=question.text, blank_count=question.blank_count)
+    return QuestionCardRead(
+        id=question.id, text=question.text, blank_count=question.blank_count
+    )
 
 
 @router.get("/answers", response_model=list[AnswerCardListItem])

@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 
 
@@ -7,14 +6,15 @@ class PlayerCardsCreate(BaseModel):
     user_id: int
     cards: list[str]
 
+
 class PlayerCardsUpdate(BaseModel):
     game_id: int
     user_id: int
     cards: list[str]
+
 
 class PlayerCardsResponse(BaseModel):
     id: int
     game_id: int
     user_id: int
     cards: list[str]
-

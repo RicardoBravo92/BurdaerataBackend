@@ -14,8 +14,8 @@ class ConnectionManager:
     MAX_TOTAL_CONNECTIONS = 500
 
     # Heartbeat settings
-    PING_INTERVAL = 30      # seconds between pings
-    PONG_TIMEOUT = 60       # seconds to wait for pong before closing
+    PING_INTERVAL = 30  # seconds between pings
+    PONG_TIMEOUT = 60  # seconds to wait for pong before closing
 
     def __init__(self):
         self._connections: dict[str, dict[str, WebSocket]] = {}
@@ -68,32 +68,39 @@ class ConnectionManager:
         self._start_heartbeat(game_id, user_id, websocket)
         return True
 
-    def _start_heartbeat(self, game_id: str, user_id: str, websocket: WebSocket) -> None:
+    def _start_heartbeat(
+        self, game_id: str, user_id: str, websocket: WebSocket
+    ) -> None:
         """Start a background task to send periodic pings."""
+
         async def heartbeat():
             try:
                 while True:
                     await asyncio.sleep(self.PING_INTERVAL)
                     # Check if connection still exists
-                    if (game_id not in self._connections or 
-                        user_id not in self._connections[game_id] or
-                        self._connections[game_id][user_id] != websocket):
+                    if (
+                        game_id not in self._connections
+                        or user_id not in self._connections[game_id]
+                        or self._connections[game_id][user_id] != websocket
+                    ):
                         break
-                    
+
                     try:
                         # Send ping and wait for pong
                         pong_waiter = asyncio.create_task(websocket.receive())
-                        
+
                         await websocket.send_json({"event": "ping"})
-                        
+
                         # Wait for pong with timeout
                         try:
-                            await asyncio.wait_for(pong_waiter, timeout=self.PONG_TIMEOUT)
+                            await asyncio.wait_for(
+                                pong_waiter, timeout=self.PONG_TIMEOUT
+                            )
                         except TimeoutError:
                             # No pong received - close connection
                             await websocket.close(code=4009, reason="Heartbeat timeout")
                             break
-                            
+
                     except (asyncio.CancelledError, ConnectionError, RuntimeError) as e:
                         # Connection error - will be handled by disconnect
                         logger.debug("WebSocket ping error: %s", e)
@@ -148,8 +155,7 @@ class ConnectionManager:
             "total_connections": self._count_total_connections(),
             "total_games": len(self._connections),
             "games": {
-                game_id: len(users)
-                for game_id, users in self._connections.items()
+                game_id: len(users) for game_id, users in self._connections.items()
             },
         }
 

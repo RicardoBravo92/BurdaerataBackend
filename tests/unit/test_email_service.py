@@ -11,9 +11,7 @@ class TestEmailService:
             captured["params"] = params
             return SimpleNamespace(id="email-1")
 
-        monkeypatch.setattr(
-            "app.services.email_service.resend.Emails.send", _fake_send
-        )
+        monkeypatch.setattr("app.services.email_service.resend.Emails.send", _fake_send)
 
         result = await email_service.send_password_recovery(
             "ana@example.com", "Ana", "https://burdaerata.app/reset?token=abc"
@@ -34,9 +32,7 @@ class TestEmailService:
             captured["params"] = params
             return SimpleNamespace(id="email-2")
 
-        monkeypatch.setattr(
-            "app.services.email_service.resend.Emails.send", _fake_send
-        )
+        monkeypatch.setattr("app.services.email_service.resend.Emails.send", _fake_send)
 
         result = await email_service.send_registration_success("ana@example.com", "Ana")
 

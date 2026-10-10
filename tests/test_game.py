@@ -1,12 +1,8 @@
-import pytest
-
 TEST_USER_ID = "user_test_123"
 OTHER_USER_ID = "user_test_456"
 
 
-async def _create_two_player_game(
-    client, auth_headers, other_auth_headers, **kwargs
-):
+async def _create_two_player_game(client, auth_headers, other_auth_headers, **kwargs):
     create_response = await client.post(
         "/api/v1/games",
         json=kwargs or {},
@@ -201,7 +197,9 @@ class TestGamePlayers:
         )
         assert response.status_code == 400
 
-    async def test_join_game_invalid_code(self, client, auth_headers, other_auth_headers):
+    async def test_join_game_invalid_code(
+        self, client, auth_headers, other_auth_headers
+    ):
         """Test joining a game with invalid code."""
         response = await client.post(
             "/api/v1/games/join",
@@ -268,9 +266,7 @@ class TestGamePlayers:
         assert game_response.status_code == 200
         assert game_response.json()["status"] == "playing"
 
-    async def test_leave_empty_lobby_deletes_game(
-        self, client, auth_headers
-    ):
+    async def test_leave_empty_lobby_deletes_game(self, client, auth_headers):
         """Test that an abandoned waiting lobby is deleted."""
         create_response = await client.post(
             "/api/v1/games",

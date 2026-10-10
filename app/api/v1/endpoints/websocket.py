@@ -53,13 +53,15 @@ async def websocket_endpoint(
 ):
     """
     WebSocket endpoint with token authentication via Authorization header.
-    
-    Client should connect with: 
+
+    Client should connect with:
     ws://host/api/v1/ws/{game_id}
     Headers: Authorization: Bearer <clerk_jwt>
     """
     if not authorization or not authorization.startswith("Bearer "):
-        await websocket.close(code=4001, reason="Missing or invalid Authorization header")
+        await websocket.close(
+            code=4001, reason="Missing or invalid Authorization header"
+        )
         return
 
     token = authorization[7:]  # Remove "Bearer " prefix

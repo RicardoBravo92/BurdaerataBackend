@@ -1,9 +1,9 @@
 from unittest.mock import AsyncMock, MagicMock
-from starlette.requests import Request
-from starlette.datastructures import Headers
 
 import pytest
 from fastapi import HTTPException
+from starlette.datastructures import Headers
+from starlette.requests import Request
 
 from app.api.v1.endpoints import email as email_endpoints
 from app.models.user import User

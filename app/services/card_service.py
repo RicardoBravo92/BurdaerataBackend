@@ -70,9 +70,7 @@ class CardService:
         a = self.get_answer_by_id(card_id)
         return a.text if a else None
 
-    def compose_answer_text(
-        self, question_id: str, answer_ids: list[str]
-    ) -> str:
+    def compose_answer_text(self, question_id: str, answer_ids: list[str]) -> str:
         """Compose a question's blanks with the given answer card texts."""
         question = self.get_question_by_id(question_id)
         if not question:

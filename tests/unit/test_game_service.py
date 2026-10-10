@@ -1,6 +1,7 @@
-import pytest
 from datetime import datetime
 from types import SimpleNamespace
+
+import pytest
 
 from app.models.game import Game
 from app.models.game_player import GamePlayer
@@ -12,15 +13,15 @@ from app.services.game_service import _answer_to_dict, _player_to_dict, game_ser
 
 
 def _game(**overrides):
-    values = dict(
-        id="game-1",
-        code="123456",
-        host_player_id="user-1",
-        status="waiting",
-        max_players=8,
-        score_to_win=7,
-        public=True,
-    )
+    values = {
+        "id": "game-1",
+        "code": "123456",
+        "host_player_id": "user-1",
+        "status": "waiting",
+        "max_players": 8,
+        "score_to_win": 7,
+        "public": True,
+    }
     values.update(overrides)
     return Game(**values)
 
@@ -30,28 +31,28 @@ def _player(user_id, game_id="game-1", score=0):
 
 
 def _round(**overrides):
-    values = dict(
-        id="round-1",
-        game_id="game-1",
-        round_number=1,
-        question_card_id="q1",
-        judge_user_id="user-3",
-        status="submitting",
-        winning_answer_id=None,
-    )
+    values = {
+        "id": "round-1",
+        "game_id": "game-1",
+        "round_number": 1,
+        "question_card_id": "q1",
+        "judge_user_id": "user-3",
+        "status": "submitting",
+        "winning_answer_id": None,
+    }
     values.update(overrides)
     return Round(**values)
 
 
 def _answer(**overrides):
-    values = dict(
-        id="ans-1",
-        round_id="round-1",
-        user_id="user-2",
-        cards_used=["a1"],
-        final_text="",
-        is_winner=False,
-    )
+    values = {
+        "id": "ans-1",
+        "round_id": "round-1",
+        "user_id": "user-2",
+        "cards_used": ["a1"],
+        "final_text": "",
+        "is_winner": False,
+    }
     values.update(overrides)
     return RoundAnswer(**values)
 
@@ -184,6 +185,7 @@ class TestJoinGame:
     ):
         mock_game_repo.resolve_game.return_value = None
         from app.services.exceptions import GameNotFoundError
+
         with pytest.raises(GameNotFoundError):
             await game_service.join_game(fake_session, "user-2", "123456")
 
@@ -192,6 +194,7 @@ class TestJoinGame:
     ):
         mock_game_repo.resolve_game.return_value = _game(status="playing")
         from app.services.exceptions import GameAlreadyStartedError
+
         with pytest.raises(GameAlreadyStartedError):
             await game_service.join_game(fake_session, "user-2", "123456")
 
@@ -201,6 +204,7 @@ class TestJoinGame:
         mock_game_repo.resolve_game.return_value = _game()
         mock_game_repo.get_player_row.return_value = _player("user-1")
         from app.services.exceptions import PlayerAlreadyInGameError
+
         with pytest.raises(PlayerAlreadyInGameError):
             await game_service.join_game(fake_session, "user-1", "123456")
 
@@ -212,6 +216,7 @@ class TestJoinGame:
         mock_game_repo.get_player_row.return_value = None
         mock_game_repo.count_players.return_value = 2
         from app.services.exceptions import GameFullError
+
         with pytest.raises(GameFullError):
             await game_service.join_game(fake_session, "user-2", "123456")
 
@@ -296,14 +301,14 @@ class TestStartGame:
     ):
         mock_game_repo.get_game_by_id.return_value = None
         from app.services.exceptions import GameNotFoundError
+
         with pytest.raises(GameNotFoundError):
             await game_service.start_game(fake_session, "user-1", "game-1")
 
-    async def test_not_waiting(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_not_waiting(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_game_by_id.return_value = _game(status="playing")
         from app.services.exceptions import GameAlreadyStartedError
+
         with pytest.raises(GameAlreadyStartedError):
             await game_service.start_game(fake_session, "user-1", "game-1")
 
@@ -313,36 +318,33 @@ class TestStartGame:
         mock_game_repo.get_game_by_id.return_value = _game()
         mock_game_repo.list_players.return_value = [_player("user-1")]
         from app.services.exceptions import NotEnoughPlayersError
+
         with pytest.raises(NotEnoughPlayersError):
             await game_service.start_game(fake_session, "user-1", "game-1")
 
-    async def test_not_in_game(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_not_in_game(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_game_by_id.return_value = _game()
         mock_game_repo.list_players.return_value = [
             _player("user-1"),
             _player("user-2"),
         ]
         from app.services.exceptions import NotInGameError
+
         with pytest.raises(NotInGameError):
             await game_service.start_game(fake_session, "outsider", "game-1")
 
-    async def test_host_only(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_host_only(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_game_by_id.return_value = _game(host_player_id="user-1")
         mock_game_repo.list_players.return_value = [
             _player("user-1"),
             _player("user-2"),
         ]
         from app.services.exceptions import NotGameHostError
+
         with pytest.raises(NotGameHostError):
             await game_service.start_game(fake_session, "user-2", "game-1")
 
-    async def test_success(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_success(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         players = [_player("user-1"), _player("user-2")]
         mock_game_repo.get_game_by_id.return_value = _game()
         mock_game_repo.list_players.return_value = players
@@ -408,6 +410,7 @@ class TestStartNextRound:
     ):
         mock_game_repo.get_game_by_id.return_value = None
         from app.services.exceptions import GameNotFoundError
+
         with pytest.raises(GameNotFoundError):
             await game_service.start_next_round(fake_session, "user-1", "game-1")
 
@@ -416,30 +419,29 @@ class TestStartNextRound:
     ):
         mock_game_repo.get_game_by_id.return_value = _game(status="waiting")
         from app.services.exceptions import GameNotInProgressError
+
         with pytest.raises(GameNotInProgressError):
             await game_service.start_next_round(fake_session, "user-1", "game-1")
 
-    async def test_not_in_game(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_not_in_game(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_game_by_id.return_value = _game(status="playing")
         mock_game_repo.list_players.return_value = [
             _player("user-1"),
             _player("user-2"),
         ]
         from app.services.exceptions import NotInGameError
+
         with pytest.raises(NotInGameError):
             await game_service.start_next_round(fake_session, "outsider", "game-1")
 
-    async def test_host_only(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_host_only(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_game_by_id.return_value = _game(status="playing")
         mock_game_repo.list_players.return_value = [
             _player("user-1"),
             _player("user-2"),
         ]
         from app.services.exceptions import NotGameHostError
+
         with pytest.raises(NotGameHostError):
             await game_service.start_next_round(fake_session, "user-2", "game-1")
 
@@ -453,6 +455,7 @@ class TestStartNextRound:
         ]
         mock_game_repo.get_last_round.return_value = None
         from app.services.exceptions import GameNotFoundError
+
         with pytest.raises(GameNotFoundError):
             await game_service.start_next_round(fake_session, "user-1", "game-1")
 
@@ -466,6 +469,7 @@ class TestStartNextRound:
         ]
         mock_game_repo.get_last_round.return_value = _round(status="submitting")
         from app.services.exceptions import RoundAlreadyFinishedError
+
         with pytest.raises(RoundAlreadyFinishedError):
             await game_service.start_next_round(fake_session, "user-1", "game-1")
 
@@ -500,24 +504,33 @@ class TestCreateRoundAnswer:
     ):
         mock_game_repo.get_round.return_value = None
         from app.services.exceptions import GameNotFoundError
+
         with pytest.raises(GameNotFoundError):
-            await game_service.create_round_answer(fake_session, "round-1", "user-2", ["a1"])
+            await game_service.create_round_answer(
+                fake_session, "round-1", "user-2", ["a1"]
+            )
 
     async def test_round_not_submitting(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
     ):
         mock_game_repo.get_round.return_value = _round(status="finished")
         from app.services.exceptions import RoundNotAcceptingAnswersError
+
         with pytest.raises(RoundNotAcceptingAnswersError):
-            await game_service.create_round_answer(fake_session, "round-1", "user-2", ["a1"])
+            await game_service.create_round_answer(
+                fake_session, "round-1", "user-2", ["a1"]
+            )
 
     async def test_judge_cannot_submit(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
     ):
         mock_game_repo.get_round.return_value = _round(judge_user_id="user-2")
         from app.services.exceptions import JudgeCannotSubmitError
+
         with pytest.raises(JudgeCannotSubmitError):
-            await game_service.create_round_answer(fake_session, "round-1", "user-2", ["a1"])
+            await game_service.create_round_answer(
+                fake_session, "round-1", "user-2", ["a1"]
+            )
 
     async def test_duplicate_answer(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
@@ -525,15 +538,17 @@ class TestCreateRoundAnswer:
         mock_game_repo.get_round.return_value = _round()
         mock_game_repo.get_answer_by_user.return_value = _answer()
         from app.services.exceptions import AlreadySubmittedError
-        with pytest.raises(AlreadySubmittedError):
-            await game_service.create_round_answer(fake_session, "round-1", "user-2", ["a1"])
 
-    async def test_empty_cards(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+        with pytest.raises(AlreadySubmittedError):
+            await game_service.create_round_answer(
+                fake_session, "round-1", "user-2", ["a1"]
+            )
+
+    async def test_empty_cards(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_round.return_value = _round()
         mock_game_repo.get_answer_by_user.return_value = None
         from app.services.exceptions import InvalidCardsError
+
         with pytest.raises(InvalidCardsError, match="at least one card"):
             await game_service.create_round_answer(
                 fake_session, "round-1", "user-2", ["", None]
@@ -546,14 +561,13 @@ class TestCreateRoundAnswer:
         mock_game_repo.get_answer_by_user.return_value = None
         mock_game_repo.get_player_cards_row.return_value = _hand(["a1", "a2"])
         from app.services.exceptions import InvalidCardsError
+
         with pytest.raises(InvalidCardsError, match="do not have"):
             await game_service.create_round_answer(
                 fake_session, "round-1", "user-2", ["a9"]
             )
 
-    async def test_success(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+    async def test_success(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         row = _hand(["a1", "a2"])
         mock_game_repo.get_round.return_value = _round()
         mock_game_repo.get_answer_by_user.return_value = None
@@ -621,30 +635,25 @@ class TestSelectWinner:
     ):
         mock_game_repo.get_round.return_value = None
         from app.services.exceptions import GameNotFoundError
-        with pytest.raises(GameNotFoundError):
-            await game_service.select_winner(
-                fake_session, "user-1", "round-1", "ans-1"
-            )
 
-    async def test_judge_only(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+        with pytest.raises(GameNotFoundError):
+            await game_service.select_winner(fake_session, "user-1", "round-1", "ans-1")
+
+    async def test_judge_only(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         mock_game_repo.get_round.return_value = _round(judge_user_id="user-1")
         from app.services.exceptions import JudgeCannotSubmitError
+
         with pytest.raises(JudgeCannotSubmitError):
-            await game_service.select_winner(
-                fake_session, "user-2", "round-1", "ans-1"
-            )
+            await game_service.select_winner(fake_session, "user-2", "round-1", "ans-1")
 
     async def test_round_already_finished(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
     ):
         mock_game_repo.get_round.return_value = _round(status="finished")
         from app.services.exceptions import RoundAlreadyFinishedError
+
         with pytest.raises(RoundAlreadyFinishedError):
-            await game_service.select_winner(
-                fake_session, "user-3", "round-1", "ans-1"
-            )
+            await game_service.select_winner(fake_session, "user-3", "round-1", "ans-1")
 
     async def test_not_all_players_submitted(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
@@ -653,10 +662,9 @@ class TestSelectWinner:
         mock_game_repo.count_players.return_value = 3
         mock_game_repo.list_answers.return_value = [_answer()]
         from app.services.exceptions import AllPlayersMustSubmitError
+
         with pytest.raises(AllPlayersMustSubmitError):
-            await game_service.select_winner(
-                fake_session, "user-3", "round-1", "ans-1"
-            )
+            await game_service.select_winner(fake_session, "user-3", "round-1", "ans-1")
 
     async def test_answer_not_in_round(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
@@ -666,10 +674,9 @@ class TestSelectWinner:
         mock_game_repo.list_answers.return_value = [_answer()]
         mock_game_repo.get_answer.return_value = None
         from app.services.exceptions import GameNotFoundError
+
         with pytest.raises(GameNotFoundError, match="Winning answer not found"):
-            await game_service.select_winner(
-                fake_session, "user-3", "round-1", "ans-1"
-            )
+            await game_service.select_winner(fake_session, "user-3", "round-1", "ans-1")
 
     async def test_judge_cannot_win(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
@@ -679,10 +686,9 @@ class TestSelectWinner:
         mock_game_repo.list_answers.return_value = [_answer()]
         mock_game_repo.get_answer.return_value = _answer(user_id="user-3")
         from app.services.exceptions import JudgeCannotWinError
+
         with pytest.raises(JudgeCannotWinError):
-            await game_service.select_winner(
-                fake_session, "user-3", "round-1", "ans-1"
-            )
+            await game_service.select_winner(fake_session, "user-3", "round-1", "ans-1")
 
     async def test_player_not_found_in_game(
         self, fake_session, mock_game_repo, mock_ws, mock_cards
@@ -694,14 +700,11 @@ class TestSelectWinner:
         mock_game_repo.get_answer.return_value = answer
         mock_game_repo.get_player_row.return_value = None
         from app.services.exceptions import PlayerNotFoundError
-        with pytest.raises(PlayerNotFoundError):
-            await game_service.select_winner(
-                fake_session, "user-3", "round-1", "ans-1"
-            )
 
-    async def test_success(
-        self, fake_session, mock_game_repo, mock_ws, mock_cards
-    ):
+        with pytest.raises(PlayerNotFoundError):
+            await game_service.select_winner(fake_session, "user-3", "round-1", "ans-1")
+
+    async def test_success(self, fake_session, mock_game_repo, mock_ws, mock_cards):
         answer = _answer()
         round = _round()
         gplayer = _player("user-2")

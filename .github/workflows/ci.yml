@@ -10,6 +10,11 @@ jobs:
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    env:
+      # Settings requires these; CI is hermetic and never touches a real DB/Clerk.
+      DATABASE_URL: sqlite+aiosqlite:///./test.db
+      CLERK_SECRET_KEY: sk_test_ci_dummy
+      RESEND_API_KEY: re_test_ci_dummy
     strategy:
       matrix:
         python-version: ["3.12"]
@@ -32,39 +37,27 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: |
-          cd Backend
-          uv sync --frozen --all-groups
+        run: uv sync --frozen --all-groups
 
       - name: Run type checks (mypy)
-        run: |
-          cd Backend
-          uv run mypy app --ignore-missing-imports || true
+        run: uv run mypy app --ignore-missing-imports || true
 
       - name: Run linting (ruff)
-        run: |
-          cd Backend
-          uv run ruff check app tests
+        run: uv run ruff check app tests
 
       - name: Run formatting check (ruff)
-        run: |
-          cd Backend
-          uv run ruff format --check app tests
+        run: uv run ruff format --check app tests
 
       - name: Run security audit (pip-audit)
-        run: |
-          cd Backend
-          uv run pip-audit --desc || true
+        run: uv run pip-audit --desc || true
 
       - name: Run tests with coverage
-        run: |
-          cd Backend
-          uv run pytest --cov=app --cov-report=xml --cov-report=term-missing --ignore=tests/test_game.py
+        run: uv run pytest --cov=app --cov-report=xml --cov-report=term-missing --ignore=tests/test_game.py
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
-          files: ./Backend/coverage.xml
+          files: ./coverage.xml
           flags: unittests
           fail_ci_if_error: false
 
@@ -99,7 +92,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v5
         with:
-          context: ./Backend
+          context: .
           push: false
           tags: burdaerata-backend:latest
           cache-from: type=gha

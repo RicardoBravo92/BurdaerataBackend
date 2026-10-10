@@ -48,9 +48,7 @@ class EmailService:
         email = resend.Emails.send(params)
         return {"success": True, "id": email.id}
 
-    async def send_registration_success(
-        self, to_email: str, user_name: str
-    ) -> dict:
+    async def send_registration_success(self, to_email: str, user_name: str) -> dict:
         """Send successful registration email in English."""
         html_content = f"""
         <!DOCTYPE html>

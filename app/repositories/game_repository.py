@@ -32,13 +32,19 @@ class GameRepository:
     async def add(self, db: AsyncSession, obj: Any) -> None:
         db.add(obj)
 
-    async def list_players(self, db: AsyncSession, game_id: str) -> Sequence[GamePlayer]:
-        result = await db.execute(select(GamePlayer).where(GamePlayer.game_id == game_id))
+    async def list_players(
+        self, db: AsyncSession, game_id: str
+    ) -> Sequence[GamePlayer]:
+        result = await db.execute(
+            select(GamePlayer).where(GamePlayer.game_id == game_id)
+        )
         return result.scalars().all()
 
     async def count_players(self, db: AsyncSession, game_id: str) -> int:
         result = await db.execute(
-            select(func.count()).select_from(GamePlayer).where(GamePlayer.game_id == game_id)
+            select(func.count())
+            .select_from(GamePlayer)
+            .where(GamePlayer.game_id == game_id)
         )
         return int(result.scalar_one())
 
@@ -61,7 +67,9 @@ class GameRepository:
             )
         )
 
-    async def delete_player_cards(self, db: AsyncSession, game_id: str, user_id: str) -> None:
+    async def delete_player_cards(
+        self, db: AsyncSession, game_id: str, user_id: str
+    ) -> None:
         await db.execute(
             delete(PlayerCard).where(
                 PlayerCard.game_id == game_id,
@@ -81,7 +89,9 @@ class GameRepository:
     async def get_round(self, db: AsyncSession, round_id: str) -> Round | None:
         return await db.get(Round, round_id)
 
-    async def list_answers(self, db: AsyncSession, round_id: str) -> Sequence[RoundAnswer]:
+    async def list_answers(
+        self, db: AsyncSession, round_id: str
+    ) -> Sequence[RoundAnswer]:
         result = await db.execute(
             select(RoundAnswer)
             .where(RoundAnswer.round_id == round_id)
@@ -115,10 +125,14 @@ class GameRepository:
         return result.scalar_one_or_none()
 
     async def delete_game_cascade(self, db: AsyncSession, game_id: str) -> None:
-        round_ids_result = await db.execute(select(Round.id).where(Round.game_id == game_id))
+        round_ids_result = await db.execute(
+            select(Round.id).where(Round.game_id == game_id)
+        )
         round_ids = [row[0] for row in round_ids_result.all()]
         if round_ids:
-            await db.execute(delete(RoundAnswer).where(RoundAnswer.round_id.in_(round_ids)))
+            await db.execute(
+                delete(RoundAnswer).where(RoundAnswer.round_id.in_(round_ids))
+            )
         await db.execute(delete(Round).where(Round.game_id == game_id))
         await db.execute(delete(PlayerCard).where(PlayerCard.game_id == game_id))
         await db.execute(delete(GamePlayer).where(GamePlayer.game_id == game_id))

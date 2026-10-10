@@ -17,7 +17,7 @@ elif database_url.startswith("postgresql://"):
 engine = create_async_engine(
     database_url,
     echo=False,
-    poolclass=NullPool,   # Neon serverless: fresh connection per request, no stale pool issues
+    poolclass=NullPool,  # Neon serverless: fresh connection per request, no stale pool issues
 )
 
 AsyncSessionLocal = sessionmaker(

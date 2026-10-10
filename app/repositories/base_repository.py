@@ -6,6 +6,7 @@ from sqlmodel import SQLModel
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
 
+
 class BaseRepository[ModelType: SQLModel]:
     """
     Base repository for common CRUD operations.
@@ -17,22 +18,14 @@ class BaseRepository[ModelType: SQLModel]:
 
     async def get(self, db: AsyncSession, id: Any) -> ModelType | None:
         """Fetch a single record by ID."""
-        result = await db.execute(
-            select(self.model).where(self.model.id == id)
-        )
+        result = await db.execute(select(self.model).where(self.model.id == id))
         return result.scalar_one_or_none()
 
     async def get_multi(
-        self, 
-        db: AsyncSession, 
-        *, 
-        skip: int = 0, 
-        limit: int = 100
+        self, db: AsyncSession, *, skip: int = 0, limit: int = 100
     ) -> list[ModelType]:
         """Fetch multiple records with pagination."""
-        result = await db.execute(
-            select(self.model).offset(skip).limit(limit)
-        )
+        result = await db.execute(select(self.model).offset(skip).limit(limit))
         return result.scalars().all()
 
     async def create(self, db: AsyncSession, *, obj_in: ModelType) -> ModelType:
@@ -43,11 +36,7 @@ class BaseRepository[ModelType: SQLModel]:
         return obj_in
 
     async def update(
-        self, 
-        db: AsyncSession, 
-        *, 
-        db_obj: ModelType, 
-        obj_in: dict | SQLModel
+        self, db: AsyncSession, *, db_obj: ModelType, obj_in: dict | SQLModel
     ) -> ModelType:
         """Update an existing record."""
         if isinstance(obj_in, dict):

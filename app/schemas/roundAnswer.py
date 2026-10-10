@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 
 
@@ -9,12 +8,14 @@ class RoundAnswerCreate(BaseModel):
     final_text: str
     is_winner: bool
 
+
 class RoundAnswerUpdate(BaseModel):
     round_id: int
     user_id: int
     cards_used: list[str]
     final_text: str
     is_winner: bool
+
 
 class RoundAnswerResponse(BaseModel):
     id: int
@@ -23,4 +24,3 @@ class RoundAnswerResponse(BaseModel):
     cards_used: list[str]
     final_text: str
     is_winner: bool
-

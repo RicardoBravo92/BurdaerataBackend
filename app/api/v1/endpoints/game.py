@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, HTTPException, Request, status
 
 from app.api.dependencies import CurrentUserDep, DbDep
@@ -96,7 +95,9 @@ async def get_game_by_code(
 ) -> GameRead:
     game = await game_service.get_game_by_code(db, code)
     if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Game not found"
+        )
     return game
 
 
@@ -108,7 +109,9 @@ async def get_game(
 ) -> GameRead:
     game = await game_service.get_game_by_id(db, game_id)
     if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Game not found"
+        )
     return game
 
 
@@ -158,7 +161,9 @@ async def get_last_round(
 ) -> RoundRead:
     round_obj = await game_service.get_last_round(db, game_id)
     if not round_obj:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No rounds found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No rounds found"
+        )
     return round_obj
 
 
@@ -184,7 +189,11 @@ async def get_round_answers(
     return answers
 
 
-@router.post("/rounds/{round_id}/answers", response_model=RoundAnswerRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/rounds/{round_id}/answers",
+    response_model=RoundAnswerRead,
+    status_code=status.HTTP_201_CREATED,
+)
 @limiter.limit("30/minute")
 async def create_round_answer(
     request: Request,

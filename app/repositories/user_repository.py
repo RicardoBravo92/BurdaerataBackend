@@ -1,4 +1,3 @@
-
 import logging
 
 from sqlalchemy import select
@@ -22,19 +21,19 @@ user_repository = UserRepository(User)
 
 async def ensure_clerk_user(db: AsyncSession, user_id: str) -> User:
     user = await user_repository.get(db, user_id)
-    
+
     # If the user doesn't exist OR they have the default "Player" name, fetch from Clerk
     if not user or user.full_name == "Player":
         try:
             clerk_user = await clerk_client.users.get_async(user_id=user_id)
-            
+
             first_name = clerk_user.first_name or ""
             last_name = clerk_user.last_name or ""
             full_name = f"{first_name} {last_name}".strip() or "Player"
             email = None
             if clerk_user.email_addresses:
                 email = clerk_user.email_addresses[0].email_address
-            
+
             if not user:
                 user = User(
                     id=user_id,
@@ -52,7 +51,7 @@ async def ensure_clerk_user(db: AsyncSession, user_id: str) -> User:
                 user.email = email
                 user.avatar_url = clerk_user.image_url
                 db.add(user)
-                
+
         except (ConnectionError, RuntimeError, ValueError) as e:
             logger.warning("Failed to fetch Clerk user %s: %s", user_id, e)
             if not user:
@@ -65,9 +64,9 @@ async def ensure_clerk_user(db: AsyncSession, user_id: str) -> User:
                     avatar_url=None,
                 )
                 db.add(user)
-        
+
         await db.flush()
         if user:
             await db.refresh(user)
-            
+
     return user

@@ -105,7 +105,7 @@ def log_security_event(
 ) -> None:
     """
     Log a security-relevant event with structured data.
-    
+
     Args:
         event_type: Type of event (e.g., "login_success", "login_failed", "auth_bypass_attempt")
         user_id: User ID if available
@@ -204,7 +204,7 @@ def log_websocket_event(
 
 class AuditLogFormatter(logging.Formatter):
     """Custom formatter that properly handles extra fields."""
-    
+
     def format(self, record: logging.LogRecord) -> str:
         # Collect standard fields
         log_dict = {
@@ -213,27 +213,44 @@ class AuditLogFormatter(logging.Formatter):
             "logger": record.name,
             "message": record.getMessage(),
         }
-        
+
         # Add extra fields (skip standard logging fields)
         standard_fields = {
-            "name", "msg", "args", "created", "filename", "funcName",
-            "levelname", "levelno", "lineno", "module", "msecs",
-            "message", "pathname", "process", "processName", "relativeCreated",
-            "thread", "threadName", "exc_info", "exc_text", "stack_info",
-            "asctime"
+            "name",
+            "msg",
+            "args",
+            "created",
+            "filename",
+            "funcName",
+            "levelname",
+            "levelno",
+            "lineno",
+            "module",
+            "msecs",
+            "message",
+            "pathname",
+            "process",
+            "processName",
+            "relativeCreated",
+            "thread",
+            "threadName",
+            "exc_info",
+            "exc_text",
+            "stack_info",
+            "asctime",
         }
-        
+
         for key, value in record.__dict__.items():
             if key not in standard_fields:
                 log_dict[key] = value
-        
+
         return json.dumps(log_dict, ensure_ascii=False, default=str)
 
 
 def configure_audit_logging(log_level: str = "INFO", json_format: bool = False) -> None:
     """Configure audit loggers with appropriate handlers."""
     level = getattr(logging, log_level.upper(), logging.INFO)
-    
+
     audit_logger.setLevel(level)
     logger.setLevel(level)
 

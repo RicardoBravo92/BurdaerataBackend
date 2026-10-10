@@ -6,6 +6,7 @@ class ChatMessageCreate(BaseModel):
     user_id: str = Field(...)
     text: str = Field(..., max_length=1000)
 
+
 class ChatMessageResponse(ChatMessageCreate):
     id: str
     created_at: str

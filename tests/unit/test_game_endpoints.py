@@ -1,9 +1,9 @@
 from unittest.mock import AsyncMock, MagicMock
-from starlette.requests import Request
-from starlette.datastructures import Headers
 
 import pytest
 from fastapi import HTTPException
+from starlette.datastructures import Headers
+from starlette.requests import Request
 
 from app.api.v1.endpoints import game as game_endpoints
 from app.models.game import Game
@@ -15,49 +15,49 @@ from app.schemas.round import CreateRoundAnswerRequest, SelectWinnerRequest
 
 
 def _game(**overrides):
-    values = dict(
-        id="game-1",
-        code="123456",
-        host_player_id="user-1",
-        status="waiting",
-        max_players=8,
-        score_to_win=7,
-        public=True,
-    )
+    values = {
+        "id": "game-1",
+        "code": "123456",
+        "host_player_id": "user-1",
+        "status": "waiting",
+        "max_players": 8,
+        "score_to_win": 7,
+        "public": True,
+    }
     values.update(overrides)
     return Game(**values)
 
 
 def _round(**overrides):
-    values = dict(
-        id="round-1",
-        game_id="game-1",
-        round_number=1,
-        question_card_id="q1",
-        judge_user_id="user-3",
-        status="submitting",
-        winning_answer_id=None,
-    )
+    values = {
+        "id": "round-1",
+        "game_id": "game-1",
+        "round_number": 1,
+        "question_card_id": "q1",
+        "judge_user_id": "user-3",
+        "status": "submitting",
+        "winning_answer_id": None,
+    }
     values.update(overrides)
     return Round(**values)
 
 
 def _answer(**overrides):
-    values = dict(
-        id="ans-1",
-        round_id="round-1",
-        user_id="user-2",
-        cards_used=["a1"],
-        final_text="",
-        is_winner=False,
-    )
+    values = {
+        "id": "ans-1",
+        "round_id": "round-1",
+        "user_id": "user-2",
+        "cards_used": ["a1"],
+        "final_text": "",
+        "is_winner": False,
+    }
     values.update(overrides)
     return RoundAnswer(**values)
 
 
 class MockRequest(Request):
     """Mock Request that allows setting state for testing."""
-    
+
     def __init__(self):
         scope = {
             "type": "http",
@@ -71,11 +71,11 @@ class MockRequest(Request):
         super().__init__(scope)
         # Set state using object.__setattr__ to bypass property
         object.__setattr__(self, "_state", MagicMock())
-    
+
     @property
     def state(self):
         return self._state
-    
+
     @state.setter
     def state(self, value):
         self._state = value
@@ -114,28 +114,31 @@ def mock_service(monkeypatch):
 @pytest.fixture(autouse=True)
 def disable_rate_limiter(monkeypatch):
     """Disable rate limiting in tests by making limiter a no-op."""
-    import app.core.rate_limit as rate_limit_module
     from slowapi import Limiter
+
+    import app.core.rate_limit as rate_limit_module
     from app.api.v1.endpoints import game as game_endpoints
-    
+
     # Create a no-op limiter
     noop_limiter = Limiter(key_func=lambda r: "test", default_limits=[])
     noop_limiter._limit = lambda limit: lambda f: f
-    
+
     # Patch the module-level limiter
     monkeypatch.setattr(rate_limit_module, "limiter", noop_limiter)
-    
+
     # Also patch the limiter on already-decorated functions
     # The limiter decorator stores the limiter on the function's __wrapped__ or as an attribute
     for attr_name in dir(game_endpoints):
         attr = getattr(game_endpoints, attr_name)
-        if hasattr(attr, '__wrapped__') or callable(attr):
+        if hasattr(attr, "__wrapped__") or callable(attr):
             # Check if it has a limiter attached
-            if hasattr(attr, 'limiter'):
-                monkeypatch.setattr(attr, 'limiter', noop_limiter, raising=False)
+            if hasattr(attr, "limiter"):
+                monkeypatch.setattr(attr, "limiter", noop_limiter, raising=False)
             # Also check __wrapped__
-            if hasattr(attr, '__wrapped__') and hasattr(attr.__wrapped__, 'limiter'):
-                monkeypatch.setattr(attr.__wrapped__, 'limiter', noop_limiter, raising=False)
+            if hasattr(attr, "__wrapped__") and hasattr(attr.__wrapped__, "limiter"):
+                monkeypatch.setattr(
+                    attr.__wrapped__, "limiter", noop_limiter, raising=False
+                )
 
 
 class TestCreateGame:
@@ -145,13 +148,17 @@ class TestCreateGame:
         request = _mock_request()
 
         result = await game_endpoints.create_game(
-            request, CreateGameRequest(max_players=4, score_to_win=5), _mock_user(), AsyncMock()
+            request,
+            CreateGameRequest(max_players=4, score_to_win=5),
+            _mock_user(),
+            AsyncMock(),
         )
 
         assert result is game
 
     async def test_error_mapped_to_400(self, mock_service):
         from app.services.exceptions import GameFullError
+
         mock_service.create_game.side_effect = GameFullError()
         request = _mock_request()
 
@@ -168,7 +175,9 @@ class TestGetGameByCode:
     async def test_success(self, mock_service):
         game = _game()
         mock_service.get_game_by_code.return_value = game
-        result = await game_endpoints.get_game_by_code("123456", _mock_user(), AsyncMock())
+        result = await game_endpoints.get_game_by_code(
+            "123456", _mock_user(), AsyncMock()
+        )
         assert result is game
 
     async def test_not_found(self, mock_service):
@@ -205,6 +214,7 @@ class TestJoinGame:
 
     async def test_error_mapped_to_400(self, mock_service):
         from app.services.exceptions import GameFullError
+
         mock_service.join_game.side_effect = GameFullError()
         request = _mock_request()
 
@@ -219,7 +229,9 @@ class TestJoinGame:
 class TestGetGamePlayers:
     async def test_success(self, mock_service):
         mock_service.get_game_players.return_value = [{"user_id": "user-1"}]
-        result = await game_endpoints.get_game_players("game-1", _mock_user(), AsyncMock())
+        result = await game_endpoints.get_game_players(
+            "game-1", _mock_user(), AsyncMock()
+        )
         assert result == [{"user_id": "user-1"}]
 
 
@@ -229,16 +241,21 @@ class TestStartGame:
         mock_service.start_game.return_value = round
         request = _mock_request()
 
-        result = await game_endpoints.start_game(request, "game-1", _mock_user(), AsyncMock())
+        result = await game_endpoints.start_game(
+            request, "game-1", _mock_user(), AsyncMock()
+        )
         assert result is round
 
     async def test_error_mapped_to_400(self, mock_service):
         from app.services.exceptions import NotEnoughPlayersError
+
         mock_service.start_game.side_effect = NotEnoughPlayersError()
         request = _mock_request()
 
         with pytest.raises(HTTPException) as exc:
-            await game_endpoints.start_game(request, "game-1", _mock_user(), AsyncMock())
+            await game_endpoints.start_game(
+                request, "game-1", _mock_user(), AsyncMock()
+            )
         assert exc.value.status_code == 422
         assert "at least 2 players" in exc.value.detail
 
@@ -247,7 +264,9 @@ class TestGetLastRound:
     async def test_success(self, mock_service):
         round = _round()
         mock_service.get_last_round.return_value = round
-        result = await game_endpoints.get_last_round("game-1", _mock_user(), AsyncMock())
+        result = await game_endpoints.get_last_round(
+            "game-1", _mock_user(), AsyncMock()
+        )
         assert result is round
 
     async def test_not_found(self, mock_service):
@@ -262,11 +281,14 @@ class TestStartNextRound:
         round = _round(round_number=2)
         mock_service.start_next_round.return_value = round
 
-        result = await game_endpoints.start_next_round("game-1", _mock_user(), AsyncMock())
+        result = await game_endpoints.start_next_round(
+            "game-1", _mock_user(), AsyncMock()
+        )
         assert result is round
 
     async def test_error_mapped_to_400(self, mock_service):
         from app.services.exceptions import GameNotInProgressError
+
         mock_service.start_next_round.side_effect = GameNotInProgressError()
 
         with pytest.raises(HTTPException) as exc:
@@ -278,13 +300,17 @@ class TestStartNextRound:
 class TestGetRoundAnswers:
     async def test_success(self, mock_service):
         mock_service.get_round_answers.return_value = [_answer()]
-        result = await game_endpoints.get_round_answers("round-1", _mock_user(), AsyncMock())
+        result = await game_endpoints.get_round_answers(
+            "round-1", _mock_user(), AsyncMock()
+        )
         assert len(result) == 1
         assert result[0].id == "ans-1"
 
 
 class TestCreateRoundAnswer:
-    @pytest.mark.skip(reason="slowapi request type check fails in tests; tested in service layer")
+    @pytest.mark.skip(
+        reason="slowapi request type check fails in tests; tested in service layer"
+    )
     async def test_success(self, mock_service):
         answer = _answer()
         mock_service.create_round_answer.return_value = answer
@@ -299,9 +325,12 @@ class TestCreateRoundAnswer:
         )
         assert result is answer
 
-    @pytest.mark.skip(reason="slowapi request type check fails in tests; tested in service layer")
+    @pytest.mark.skip(
+        reason="slowapi request type check fails in tests; tested in service layer"
+    )
     async def test_error_mapped_to_400(self, mock_service):
         from app.services.exceptions import AlreadySubmittedError
+
         mock_service.create_round_answer.side_effect = AlreadySubmittedError()
         request = _mock_request()
 
@@ -318,7 +347,9 @@ class TestCreateRoundAnswer:
 
 
 class TestSelectWinner:
-    @pytest.mark.skip(reason="slowapi request type check fails in tests; tested in service layer")
+    @pytest.mark.skip(
+        reason="slowapi request type check fails in tests; tested in service layer"
+    )
     async def test_success(self, mock_service):
         answer = _answer(is_winner=True)
         mock_service.select_winner.return_value = answer
@@ -333,9 +364,12 @@ class TestSelectWinner:
         )
         assert result is answer
 
-    @pytest.mark.skip(reason="slowapi request type check fails in tests; tested in service layer")
+    @pytest.mark.skip(
+        reason="slowapi request type check fails in tests; tested in service layer"
+    )
     async def test_error_mapped_to_400(self, mock_service):
         from app.services.exceptions import JudgeCannotSubmitError
+
         mock_service.select_winner.side_effect = JudgeCannotSubmitError()
         request = _mock_request()
 

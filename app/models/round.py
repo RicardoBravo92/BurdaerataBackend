@@ -1,4 +1,3 @@
-
 from sqlmodel import Field, SQLModel
 
 
@@ -16,4 +15,3 @@ class Round(SQLModel, table=True):
     )
     status: str = Field(default="submitting", max_length=32)
     winning_answer_id: str | None = Field(default=None, max_length=36)
-   

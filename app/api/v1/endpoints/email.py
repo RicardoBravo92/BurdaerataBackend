@@ -39,7 +39,11 @@ async def request_password_recovery(
 
     # Use config for frontend URL, put token in path not query param
     # For now, use the same message for both cases
-    recovery_link = f"{settings.frontend_url}/reset-password" if hasattr(settings, 'frontend_url') else "https://burdaerata.vercel.app/reset-password"
+    recovery_link = (
+        f"{settings.frontend_url}/reset-password"
+        if hasattr(settings, "frontend_url")
+        else "https://burdaerata.vercel.app/reset-password"
+    )
 
     if user:
         try:
