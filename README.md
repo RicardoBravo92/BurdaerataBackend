@@ -81,6 +81,8 @@ cp .env.example .env
 uv sync
 # Run with uv's Python (avoids "uv trampoline failed" on paths with spaces):
 uv run python -m uvicorn app.main:app --reload --port 8000
+# Or use FastAPI's dev CLI (auto-reload + pretty output):
+uv run python -m fastapi dev app/main.py --port 8000
 # OR use the venv directly:
 .venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```

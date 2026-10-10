@@ -1,9 +1,10 @@
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import CurrentUserDep, DbDep
+from app.core.rate_limit import limiter
 from app.schemas.game import (
     CreateGameRequest,
     GameRead,
@@ -75,7 +76,9 @@ def _handle_service_error(e: Exception) -> HTTPException:
 
 
 @router.post("", response_model=GameRead, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute")
 async def create_game(
+    request: Request,
     body: CreateGameRequest,
     current_user: CurrentUserDep,
     db: DbDep,
@@ -113,7 +116,9 @@ async def get_game(
 
 
 @router.post("/join", response_model=GameRead)
+@limiter.limit("20/minute")
 async def join_game(
+    request: Request,
     body: JoinGameRequest,
     current_user: CurrentUserDep,
     db: DbDep,
@@ -135,7 +140,9 @@ async def get_game_players(
 
 
 @router.post("/{game_id}/start", response_model=RoundRead)
+@limiter.limit("10/minute")
 async def start_game(
+    request: Request,
     game_id: str,
     current_user: CurrentUserDep,
     db: DbDep,
@@ -181,7 +188,9 @@ async def get_round_answers(
 
 
 @router.post("/rounds/{round_id}/answers", response_model=RoundAnswerRead, status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
 async def create_round_answer(
+    request: Request,
     round_id: str,
     body: CreateRoundAnswerRequest,
     current_user: CurrentUserDep,
@@ -196,7 +205,9 @@ async def create_round_answer(
 
 
 @router.post("/rounds/{round_id}/winner", response_model=RoundAnswerRead)
+@limiter.limit("10/minute")
 async def select_winner(
+    request: Request,
     round_id: str,
     body: SelectWinnerRequest,
     current_user: CurrentUserDep,

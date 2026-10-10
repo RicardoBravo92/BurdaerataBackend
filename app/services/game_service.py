@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from random import randint
+import secrets
 from typing import Any
 from uuid import uuid4
 
@@ -100,7 +100,9 @@ class GameService:
         await ensure_clerk_user(db, user_id)
         code = ""
         for _ in range(10):
-            candidate = str(randint(100000, 999999))
+            # Use cryptographically secure random for game codes
+            # 3 bytes = 6 hex chars, uppercase for readability
+            candidate = secrets.token_hex(3).upper()
             if not await game_repository.code_exists(db, candidate):
                 code = candidate
                 break
